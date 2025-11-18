@@ -15,6 +15,7 @@ const xlsx = require("xlsx");
 
 class ArmazemController {
   static async cadastroItensXlsx(req, res) {
+    const { idEstoque } = req.params;
     const file = req.file;
 
     const workbook = xlsx.read(file.buffer, {
@@ -31,12 +32,27 @@ class ArmazemController {
       return Return(res, NO_CONTENT, DefaultMessages.no_content, null);
     }
 
+    const dateISO = new Date().toISOString();
+    const codigo = randomizeNumber(8, 12);
+
     for await (let item of json) {
       var id = uuid();
       await database.query(SQL.cadastro_produto, [id, item.NOME, item.UNIDADE]);
+
+      await database.query(SQL.estocar_produto, [
+        id,
+        idEstoque,
+        item.DATA_VALIDADE == "" ? null : item.DATA_VALIDADE,
+        dateISO,
+        item.QUANTIDADE,
+        item.QUANTIDADE,
+        item.NOME,
+      ]);
     }
 
-    return Return(res, CREATED, DefaultMessages.cadastrado, json);
+    await database.query(SQL.update_armazem, [json.length, codigo, idEstoque]);
+
+    return Return(res, CREATED, DefaultMessages.cadastrado, codigo);
   }
 
   static async createArmazem(req, res) {

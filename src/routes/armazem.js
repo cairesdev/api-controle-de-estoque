@@ -10,9 +10,13 @@ const upload = multer({
 const InterceptError = require("../middlewares/intercept-erros");
 const controller = require("../controllers/armazem");
 
-router.post("/armazem/xlsx", upload.single("ARQUIVO"), (req, res, next) =>
-  InterceptError(controller.cadastroItensXlsx, req, res, next)
+router.post(
+  "/armazem/xlsx/:idEstoque",
+  upload.single("ARQUIVO"),
+  (req, res, next) =>
+    InterceptError(controller.cadastroItensXlsx, req, res, next)
 );
+
 router.post("/armazem/estoque", (req, res, next) =>
   InterceptError(controller.createArmazem, req, res, next)
 );
