@@ -60,7 +60,6 @@ class ArmazemController {
     const data = req.body;
     const { authorization } = req.headers;
 
-    const codigo = randomizeNumber(8, 12);
     const id = uuid();
 
     const userId = authorization.replace("Bearer ", "");
@@ -78,7 +77,6 @@ class ArmazemController {
 
     await database.query(SQL.cadastro_armazem, [
       id,
-      codigo,
       data.NOME,
       data.TIPO_ESTOQUE,
       data.DATA_ENTRADA,
@@ -88,6 +86,17 @@ class ArmazemController {
     ]);
 
     return Return(res, CREATED, DefaultMessages.cadastrado, id);
+  }
+
+  static async resumoRemessa(req, res) {
+    const { idRemessa } = req.params;
+    const { rows: itens } = await database.query(SQL.getItens, [idRemessa]);
+    const { rows: estoque } = await database.query(SQL.getRemessa, [idRemessa]);
+
+    return Return(res, OK, DefaultMessages.capturado, {
+      remessa: estoque[0],
+      itens,
+    });
   }
 }
 

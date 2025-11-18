@@ -21,4 +21,8 @@ router.post("/armazem/estoque", (req, res, next) =>
   InterceptError(controller.createArmazem, req, res, next)
 );
 
+router.get("/armazem/estoque/resumo/:idRemessa", (req, res, next) =>
+  InterceptError(controller.resumoRemessa, req, res, next)
+);
+
 module.exports = router;
