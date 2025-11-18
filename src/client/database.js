@@ -56,9 +56,9 @@ class Database {
       const result = await client.query(text, params);
       const duration = Date.now() - startTime;
 
-      if (process.env.NODE_ENV !== "production") {
-        console.log(`📝 [PostgreSQL] Query executada em ${duration}ms:`, text);
-      }
+      // if (process.env.NODE_ENV !== "production") {
+      //   console.log(`📝 [PostgreSQL] Query executada em ${duration}ms:`, text);
+      // }
 
       return result;
     } catch (err) {

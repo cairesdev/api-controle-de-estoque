@@ -10,6 +10,8 @@ const DefaultMessages = {
   not_found: "Item não encontrado.",
   server_error: "Erro interno do servidor. Tente novamente mais tarde.",
   atualizado: "Atualizado com sucesso.",
+  no_content: "Nenhum item presente na requisição.",
+  nao_autorizado: "Usuario não autorizado.",
 
   // CONFLITOS
   cft_nome: "Nome já registrado na base de dados.",
