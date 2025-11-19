@@ -1,8 +1,6 @@
 const { database } = require("../client/database");
-const { DefaultMessages, Return } = require("../lib/returns");
-const { CREATED, CONFLICT, OK, NOT_FOUND } = require("../lib/http-status");
+const { httpStatus, T_PT, ResponseController } = require("../lib");
 const SQL = require("../models/unidade");
-
 const { v4: uuid } = require("uuid");
 
 class UnidadeController {
@@ -17,7 +15,12 @@ class UnidadeController {
     ]);
 
     if (rowCount !== 0) {
-      return Return(res, CONFLICT, DefaultMessages.cft_nome, rows[0].id);
+      return ResponseController(
+        res,
+        httpStatus.CONFLICT,
+        T_PT.cft_nome,
+        rows[0].id
+      );
     }
 
     await database.query(SQL.create, [
@@ -31,7 +34,7 @@ class UnidadeController {
       data.TIPO_UNIDADE,
     ]);
 
-    return Return(res, CREATED, DefaultMessages.cadastrado, id);
+    return ResponseController(res, httpStatus.CREATED, T_PT.cadastrado, id);
   }
 
   static async update(req, res) {
@@ -49,22 +52,27 @@ class UnidadeController {
       idUnidade,
     ]);
 
-    return Return(res, OK, DefaultMessages.atualizado, idUnidade);
+    return ResponseController(res, httpStatus.OK, T_PT.atualizado, idUnidade);
   }
 
   static async getAll(req, res) {
     const { idEntidade } = req.params;
     const { rows } = await database.query(SQL.getAll, [idEntidade]);
-    return Return(res, OK, DefaultMessages.capturados, rows);
+    return ResponseController(res, httpStatus.OK, T_PT.capturados, rows);
   }
 
   static async getUnique(req, res) {
     const { idUnidade } = req.params;
     const { rows, rowCount } = await database.query(SQL.getUnique, [idUnidade]);
     if (rowCount === 0) {
-      return Return(res, NOT_FOUND, DefaultMessages.not_found, null);
+      return ResponseController(
+        res,
+        httpStatus.NOT_FOUND,
+        T_PT.not_found,
+        null
+      );
     }
-    return Return(res, OK, DefaultMessages.capturado, rows[0]);
+    return ResponseController(res, httpStatus.OK, T_PT.capturado, rows[0]);
   }
 }
 

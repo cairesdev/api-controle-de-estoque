@@ -1,14 +1,10 @@
 const { database } = require("../client/database");
-const { DefaultMessages, Return } = require("../lib/returns");
-const { randomizeNumber } = require("../lib/utils");
 const {
-  CREATED,
-  CONFLICT,
-  OK,
-  NOT_FOUND,
-  UNAUTHORIZED,
-  NO_CONTENT,
-} = require("../lib/http-status");
+  T_PT,
+  ResponseController,
+  randomizeNumber,
+  httpStatus,
+} = require("../lib");
 const SQL = require("../models/armazem");
 const { v4: uuid } = require("uuid");
 const xlsx = require("xlsx");
@@ -29,7 +25,12 @@ class ArmazemController {
     const json = xlsx.utils.sheet_to_json(sheet, { defval: "" });
 
     if (json.length === 0) {
-      return Return(res, NO_CONTENT, DefaultMessages.no_content, null);
+      return ResponseController(
+        res,
+        httpStatus.NO_CONTENT,
+        T_PT.no_content,
+        null
+      );
     }
 
     const dateISO = new Date().toISOString();
@@ -52,7 +53,7 @@ class ArmazemController {
 
     await database.query(SQL.update_armazem, [json.length, codigo, idEstoque]);
 
-    return Return(res, CREATED, DefaultMessages.cadastrado, codigo);
+    return ResponseController(res, httpStatus.CREATED, T_PT.cadastrado, codigo);
   }
 
   static async createArmazem(req, res) {
@@ -69,10 +70,20 @@ class ArmazemController {
 
     if (rowCount !== 0) {
       if (rows[0].nivel <= 3) {
-        return Return(res, UNAUTHORIZED, DefaultMessages.nao_autorizado, null);
+        return ResponseController(
+          res,
+          httpStatus.UNAUTHORIZED,
+          T_PT.nao_autorizado,
+          null
+        );
       }
     } else {
-      return Return(res, UNAUTHORIZED, DefaultMessages.nao_autorizado, null);
+      return ResponseController(
+        res,
+        httpStatus.UNAUTHORIZED,
+        T_PT.nao_autorizado,
+        null
+      );
     }
 
     await database.query(SQL.cadastro_armazem, [
@@ -85,7 +96,7 @@ class ArmazemController {
       data.LOCAL_ESTOCADO,
     ]);
 
-    return Return(res, CREATED, DefaultMessages.cadastrado, id);
+    return ResponseController(res, httpStatus.CREATED, T_PT.cadastrado, id);
   }
 
   static async resumoRemessa(req, res) {
@@ -93,7 +104,7 @@ class ArmazemController {
     const { rows: itens } = await database.query(SQL.getItens, [idRemessa]);
     const { rows: estoque } = await database.query(SQL.getRemessa, [idRemessa]);
 
-    return Return(res, OK, DefaultMessages.capturado, {
+    return ResponseController(res, httpStatus.OK, T_PT.capturado, {
       remessa: estoque[0],
       itens,
     });

@@ -1,6 +1,5 @@
+const { T_PT, ResponseController, httpStatus } = require("../lib");
 const { database } = require("../client/database");
-const { DefaultMessages, Return } = require("../lib/returns");
-const { CREATED, CONFLICT, OK, NOT_FOUND } = require("../lib/http-status");
 const SQL = require("../models/orgao");
 const { v4: uuid } = require("uuid");
 
@@ -14,7 +13,12 @@ class OrgaoController {
     ]);
 
     if (rowCount !== 0) {
-      return Return(res, CONFLICT, DefaultMessages.cft_nome, rows[0].id);
+      return ResponseController(
+        res,
+        httpStatus.CONFLICT,
+        T_PT.cft_nome,
+        rows[0].id
+      );
     }
 
     await database.query(SQL.cadastro, [
@@ -27,7 +31,7 @@ class OrgaoController {
       data.TELEFONE,
     ]);
 
-    return Return(res, CREATED, DefaultMessages.cadastrado, id);
+    return ResponseController(res, httpStatus.CREATED, T_PT.cadastrado, id);
   }
 
   static async cadastrarModulos(req, res) {
@@ -40,7 +44,12 @@ class OrgaoController {
     ]);
 
     if (rowCount !== 0) {
-      return Return(res, CONFLICT, DefaultMessages.cft_modulos, rows[0].id);
+      return ResponseController(
+        res,
+        httpStatus.CONFLICT,
+        T_PT.cft_modulos,
+        rows[0].id
+      );
     }
 
     await database.query(SQL.modulos_liberados, [
@@ -52,12 +61,12 @@ class OrgaoController {
       data.OUTROS,
     ]);
 
-    return Return(res, CREATED, DefaultMessages.cadastrado, id);
+    return ResponseController(res, httpStatus.CREATED, T_PT.cadastrado, id);
   }
 
   static async listaEntidades(req, res) {
     const { rows } = await database.query(SQL.getEntidades, []);
-    return Return(res, OK, DefaultMessages.capturados, rows);
+    return ResponseController(res, httpStatus.OK, T_PT.capturados, rows);
   }
 
   static async listaEntidade(req, res) {
@@ -66,9 +75,14 @@ class OrgaoController {
       idEntidade,
     ]);
     if (rowCount === 0) {
-      return Return(res, NOT_FOUND, DefaultMessages.not_found, null);
+      return ResponseController(
+        res,
+        httpStatus.NOT_FOUND,
+        T_PT.not_found,
+        null
+      );
     }
-    return Return(res, OK, DefaultMessages.capturado, rows[0]);
+    return ResponseController(res, httpStatus.OK, T_PT.capturado, rows[0]);
   }
 
   static async updateEntidade(req, res) {
@@ -86,7 +100,7 @@ class OrgaoController {
       idEntidade,
     ]);
 
-    return Return(res, OK, DefaultMessages.atualizado, idEntidade);
+    return ResponseController(res, httpStatus.OK, T_PT.atualizado, idEntidade);
   }
 
   static async updateModulos(req, res) {
@@ -101,7 +115,7 @@ class OrgaoController {
       idEntidade,
     ]);
 
-    return Return(res, OK, DefaultMessages.atualizado, idEntidade);
+    return ResponseController(res, httpStatus.OK, T_PT.atualizado, idEntidade);
   }
 }
 

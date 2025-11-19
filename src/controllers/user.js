@@ -1,8 +1,6 @@
+const { httpStatus, T_PT, ResponseController } = require("../lib");
 const { database } = require("../client/database");
-const { DefaultMessages, Return } = require("../lib/returns");
-const { CREATED, CONFLICT } = require("../lib/http-status");
 const SQL = require("../models/user");
-
 const { v4: uuid } = require("uuid");
 
 class UserController {
@@ -15,7 +13,12 @@ class UserController {
     ]);
 
     if (rowCount !== 0) {
-      return Return(res, CONFLICT, DefaultMessages.cft_usuario, rows[0].id);
+      return ResponseController(
+        res,
+        httpStatus.CONFLICT,
+        T_PT.cft_usuario,
+        rows[0].id
+      );
     }
 
     await database.query(SQL.create, [
@@ -29,7 +32,7 @@ class UserController {
       data.SENHA,
     ]);
 
-    return Return(res, CREATED, DefaultMessages.cadastrado, id);
+    return ResponseController(res, httpStatus.CREATED, T_PT.cadastrado, id);
   }
 }
 
