@@ -10,6 +10,26 @@ const { v4: uuid } = require("uuid");
 const xlsx = require("xlsx");
 
 class ArmazemController {
+  static async cadastroIndividual(req, res) {
+    const { idEstoque } = req.params;
+    const data = req.body;
+
+    const id = uuid();
+    const dateISO = new Date().toISOString();
+
+    await database.query(SQL.estocar_item, [
+      id,
+      idEstoque,
+      data.DATA_VALIDADE,
+      dateISO,
+      data.QUANTIDADE,
+      data.QUANTIDADE,
+      data.PRODUTO,
+    ]);
+
+    return ResponseController(res, httpStatus.CREATED, T_PT.cadastrado, id);
+  }
+
   static async cadastroItensXlsx(req, res) {
     const { idEstoque } = req.params;
     const file = req.file;
@@ -34,7 +54,6 @@ class ArmazemController {
     }
 
     const dateISO = new Date().toISOString();
-    const codigo = randomizeNumber(8, 12);
 
     for await (let item of json) {
       var id = uuid();
@@ -51,7 +70,7 @@ class ArmazemController {
       ]);
     }
 
-    await database.query(SQL.update_armazem, [json.length, codigo, idEstoque]);
+    await database.query(SQL.update_armazem, [json.length, idEstoque]);
 
     return ResponseController(res, httpStatus.CREATED, T_PT.cadastrado, codigo);
   }
@@ -62,6 +81,7 @@ class ArmazemController {
     const { authorization } = req.headers;
 
     const id = uuid();
+    const codigo = randomizeNumber(8, 12);
 
     const userId = authorization.replace("Bearer ", "");
     const { rows, rowCount } = await database.query(SQL.verifica_usuario, [
@@ -94,6 +114,7 @@ class ArmazemController {
       idEntidade,
       userId,
       data.LOCAL_ESTOCADO,
+      codigo,
     ]);
 
     return ResponseController(res, httpStatus.CREATED, T_PT.cadastrado, id);
