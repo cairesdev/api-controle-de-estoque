@@ -79,11 +79,11 @@ class ArmazemController {
     const { idEntidade } = req.params;
     const data = req.body;
     const { authorization } = req.headers;
+    const userId = authorization.replace("Bearer ", "");
 
     const id = uuid();
     const codigo = randomizeNumber(8, 12);
 
-    const userId = authorization.replace("Bearer ", "");
     const { rows, rowCount } = await database.query(SQL.verifica_usuario, [
       userId,
     ]);
