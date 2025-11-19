@@ -21,11 +21,32 @@ class SolicitacaoController {
       data.STATUS,
       dateISO,
       userId,
-      data.QNT_SOLICITADA,
       data.NOME,
     ]);
 
     return ResponseController(res, httpStatus.CREATED, T_PT.cadastrado, id);
+  }
+
+  static async itemSolicitado(req, res) {
+    const { idSolicitacao } = req.params;
+    const data = req.body;
+
+    const id = uuid();
+
+    await database.query(SQL.createItemSolicitado, [
+      id,
+      idSolicitacao,
+      data.PRODUTO,
+      data.QNT_SOLICITADA,
+    ]);
+
+    return ResponseController(res, httpStatus.CREATED, T_PT.cadastrado, id);
+  }
+
+  static async getSolicitacoes(req, res) {
+    const { idUnidade } = req.params;
+    const { rows } = await database.query(SQL.getSolicitacoes, [idUnidade]);
+    return ResponseController(res, httpStatus.OK, T_PT.capturados, rows);
   }
 }
 
