@@ -48,6 +48,38 @@ class SolicitacaoController {
     const { rows } = await database.query(SQL.getSolicitacoes, [idUnidade]);
     return ResponseController(res, httpStatus.OK, T_PT.capturados, rows);
   }
+
+  static async getSolicitacao(req, res) {
+    const { idSolicitacao } = req.params;
+    const { visualizacao } = req.query;
+
+    const tiposVisualizacao = ["administrativa", "unidade", "almoxarifado"];
+    if (!tiposVisualizacao.includes(visualizacao)) {
+      return ResponseController(
+        res,
+        httpStatus.NOT_ACEPTABLE,
+        T_PT.not_found,
+        null
+      );
+    }
+
+    const { rows: solicitacao } = await database.query(SQL.getSolicitacao, [
+      idSolicitacao,
+    ]);
+
+    const { rows: itens } = await database.query(SQL.getItensSolicitacao, [
+      idSolicitacao,
+    ]);
+
+    if (visualizacao === "almoxarifado") {
+      await database.query(SQL.setAsPendente, [idSolicitacao]);
+    }
+
+    return ResponseController(res, httpStatus.OK, T_PT.capturados, {
+      solicitacao,
+      itens,
+    });
+  }
 }
 
 module.exports = SolicitacaoController;
