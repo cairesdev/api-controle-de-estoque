@@ -18,10 +18,12 @@ const T_PT = {
   cft_nome: "Nome já registrado na base de dados.",
   cft_usuario: "Usuario não disponível.",
   cft_modulos: "Modulos já registrados.",
+  cft_credenciais: "Credenciais inválidas.",
 
   // LISTAGEM
   capturados: "Itens capturados com sucesso.",
   capturado: "Item capturado com sucesso.",
+  autorizado: "Acesso autorizado.",
 };
 
 module.exports = { PG_DEFAULT_POOL, T_PT };

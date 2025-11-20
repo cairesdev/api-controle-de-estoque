@@ -10,7 +10,9 @@ const m = new validator(schema.create);
 router.post(
   "/usuario/perfil",
   (req, res, next) => m.validate(req, res, next),
-  (req, res, next) => InterceptError(controller.create, req, res, next)
+  controller.create
 );
+
+router.post("/usuario/login", controller.login);
 
 module.exports = router;

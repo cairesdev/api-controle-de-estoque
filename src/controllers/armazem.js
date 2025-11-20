@@ -78,14 +78,13 @@ class ArmazemController {
   static async createArmazem(req, res) {
     const { idEntidade } = req.params;
     const data = req.body;
-    const { authorization } = req.headers;
-    const userId = authorization.replace("Bearer ", "");
+    const user = req.user;
 
     const id = uuid();
     const codigo = randomizeNumber(8, 12);
 
     const { rows, rowCount } = await database.query(SQL.verifica_usuario, [
-      userId,
+      user.id,
     ]);
 
     if (rowCount !== 0) {
@@ -112,7 +111,7 @@ class ArmazemController {
       data.TIPO_ESTOQUE,
       data.DATA_ENTRADA,
       idEntidade,
-      userId,
+      user.id,
       data.LOCAL_ESTOCADO,
       codigo,
     ]);
