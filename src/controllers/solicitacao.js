@@ -7,9 +7,7 @@ class SolicitacaoController {
   static async createSolicitacao(req, res) {
     const { idUnidade } = req.params;
     const data = req.body;
-
-    const { authorization } = req.headers;
-    const userId = authorization.replace("Bearer ", "");
+    const user = req.user;
 
     const id = uuid();
     const dateISO = new Date().toISOString();
@@ -20,7 +18,7 @@ class SolicitacaoController {
       idUnidade,
       data.STATUS,
       dateISO,
-      userId,
+      user.id,
       data.NOME,
     ]);
 
