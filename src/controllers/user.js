@@ -53,9 +53,10 @@ class UserController {
 
   static async login(req, res) {
     const data = req.body;
+
     try {
       const { rowCount, rows } = await database.query(SQL.verificacao_login, [
-        data.LOGIN,
+        data.username,
       ]);
 
       if (rowCount === 0) {
@@ -67,7 +68,7 @@ class UserController {
         );
       }
 
-      const machPass = await bcrypt.compare(data.SENHA, rows[0].senha);
+      const machPass = await bcrypt.compare(data.password, rows[0].senha);
 
       if (!machPass) {
         return ResponseController(
@@ -80,15 +81,23 @@ class UserController {
 
       const token = jwt.sign(
         {
-          login: data.LOGIN,
+          login: data.username,
           id: rows[0].id,
           nome: rows[0].nome,
         },
         JWT_SECRET,
-        { expiresIn: "1h" }
+        { expiresIn: "1m" }
       );
 
-      return ResponseController(res, httpStatus.OK, T_PT.capturado, token);
+      const user = {
+        access_token: token,
+        nome: rows[0].nome,
+        descricao: rows[0].descricao,
+        login: data.username,
+        expires_on: new Date(Date.now() + 1 * 60 * 1000),
+      };
+
+      return ResponseController(res, httpStatus.OK, T_PT.autorizado, user);
     } catch (error) {
       console.error(error);
       return ResponseController(

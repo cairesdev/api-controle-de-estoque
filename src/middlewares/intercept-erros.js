@@ -38,7 +38,6 @@ const InterceptError = async (callback, req, res, next) => {
       });
     }
 
-    // Token válido → salvar dados no req
     req.user = decoded;
 
     await callback(req, res, next);

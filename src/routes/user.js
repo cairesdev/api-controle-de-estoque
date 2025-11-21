@@ -1,6 +1,4 @@
 const router = require("express").Router();
-
-const InterceptError = require("../middlewares/intercept-erros");
 const validator = require("../middlewares/validate-schema");
 
 const schema = require("../lib/schemas/user");
