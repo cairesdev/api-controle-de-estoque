@@ -79,22 +79,36 @@ class UserController {
         );
       }
 
+      const { rows: dados_usuario } = await database.query(SQL.dados_usuario, [
+        rows[0].id,
+      ]);
+
       const token = jwt.sign(
         {
           login: data.username,
           id: rows[0].id,
-          nome: rows[0].nome,
+          nivel: dados_usuario[0].nivel,
+          nome: dados_usuario[0].nome,
+          entidade_nome: dados_usuario[0].entidade,
+          entidade_id: dados_usuario[0].id_orgao,
+          unidade_id: dados_usuario[0].id_unidade,
+          unidade_nome: dados_usuario[0].unidade,
         },
         JWT_SECRET,
-        { expiresIn: "1m" }
+        { expiresIn: "1h" }
       );
 
       const user = {
         access_token: token,
-        nome: rows[0].nome,
-        descricao: rows[0].descricao,
+        nome: dados_usuario[0].nome,
+        descricao: dados_usuario[0].descricao,
         login: data.username,
-        expires_on: new Date(Date.now() + 1 * 60 * 1000),
+        nivel: dados_usuario[0].nivel,
+        expires_on: new Date(Date.now() + 1 * 60 * 60 * 1000),
+        entidade_nome: dados_usuario[0].entidade,
+        entidade_id: dados_usuario[0].id_orgao,
+        unidade_id: dados_usuario[0].id_unidade,
+        unidade_nome: dados_usuario[0].unidade,
       };
 
       return ResponseController(res, httpStatus.OK, T_PT.autorizado, user);
