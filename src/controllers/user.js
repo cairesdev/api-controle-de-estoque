@@ -13,7 +13,7 @@ class UserController {
     const data = req.body;
     const id = uuid();
     try {
-      const { rowCount, rows } = await database.query(SQL.verificacao_login, [
+      const { rowCount } = await database.query(SQL.verificacao_login, [
         data.LOGIN,
       ]);
 
@@ -85,14 +85,8 @@ class UserController {
 
       const token = jwt.sign(
         {
-          login: data.username,
           id: rows[0].id,
-          nivel: dados_usuario[0].nivel,
           nome: dados_usuario[0].nome,
-          entidade_nome: dados_usuario[0].entidade,
-          entidade_id: dados_usuario[0].id_orgao,
-          unidade_id: dados_usuario[0].id_unidade,
-          unidade_nome: dados_usuario[0].unidade,
         },
         JWT_SECRET,
         { expiresIn: "1h" }
