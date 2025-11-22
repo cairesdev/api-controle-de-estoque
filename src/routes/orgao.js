@@ -9,7 +9,7 @@ const controller = require("../controllers/orgao");
 const o = new validator(schema.orgao);
 const m = new validator(schema.modulos);
 
-router.get("/entidade", (req, res, next) =>
+router.get("/entidades", (req, res, next) =>
   InterceptError(controller.listaEntidades, req, res, next)
 );
 
