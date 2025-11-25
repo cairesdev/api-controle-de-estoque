@@ -21,8 +21,12 @@ router.post("/armazem/individual/:idEstoque", (req, res, next) =>
   InterceptError(controller.cadastroIndividual, req, res, next)
 );
 
-router.post("/armazem/estoque", (req, res, next) =>
+router.post("/armazem/estoque/:idEntidade", (req, res, next) =>
   InterceptError(controller.createArmazem, req, res, next)
+);
+
+router.get("/armazem/estoque/:idEntidade", (req, res, next) =>
+  InterceptError(controller.getEstoques, req, res, next)
 );
 
 router.get("/armazem/estoque/resumo/:idRemessa", (req, res, next) =>

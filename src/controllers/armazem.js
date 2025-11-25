@@ -5,6 +5,7 @@ const {
   randomizeNumber,
   httpStatus,
 } = require("../lib");
+const HttpStatus = require("../lib/http-status");
 const SQL = require("../models/armazem");
 const { v4: uuid } = require("uuid");
 const xlsx = require("xlsx");
@@ -72,7 +73,12 @@ class ArmazemController {
 
     await database.query(SQL.update_armazem, [json.length, idEstoque]);
 
-    return ResponseController(res, httpStatus.CREATED, T_PT.cadastrado, codigo);
+    return ResponseController(
+      res,
+      httpStatus.CREATED,
+      T_PT.cadastrado,
+      json.length
+    );
   }
 
   static async createArmazem(req, res) {
@@ -88,7 +94,7 @@ class ArmazemController {
     ]);
 
     if (rowCount !== 0) {
-      if (rows[0].nivel <= 3) {
+      if (rows[0].nivel < 2) {
         return ResponseController(
           res,
           httpStatus.UNAUTHORIZED,
@@ -128,6 +134,12 @@ class ArmazemController {
       remessa: estoque[0],
       itens,
     });
+  }
+
+  static async getEstoques(req, res) {
+    const { idEntidade } = req.params;
+    const { rows } = await database.query(SQL.getAllEstoque, [idEntidade]);
+    return ResponseController(res, HttpStatus.OK, T_PT.capturados, rows);
   }
 }
 
