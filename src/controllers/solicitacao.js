@@ -74,7 +74,7 @@ class SolicitacaoController {
     }
 
     return ResponseController(res, httpStatus.OK, T_PT.capturados, {
-      solicitacao,
+      solicitacao: solicitacao[0],
       itens,
     });
   }
