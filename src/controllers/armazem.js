@@ -141,6 +141,57 @@ class ArmazemController {
     const { rows } = await database.query(SQL.getAllEstoque, [idEntidade]);
     return ResponseController(res, HttpStatus.OK, T_PT.capturados, rows);
   }
+
+  static async liberaSolicitacao(req, res) {
+    const { idSolicitacao, idEntidade } = req.params;
+    const data = req.body;
+
+    const codigo = randomizeNumber(7, 12);
+    const dateISO = new Date().toISOString();
+    const id = uuid();
+
+    await database.query(SQL.createEstoqueUnidade, [
+      id,
+      idSolicitacao,
+      dateISO,
+      codigo,
+      data.RETIRADAS.length,
+      data.RETIRADAS.length,
+      data.DESTINATARIO,
+      data.SOLICITACAO,
+    ]);
+
+    for await (let item of data.RETIRADAS) {
+      var productId = uuid();
+
+      await database.query(SQL.estocar_item_solicitado, [
+        productId,
+        id,
+        item.id,
+        dateISO,
+        item.qnt_liberada,
+        item.qnt_liberada,
+        item.id,
+      ]);
+
+      await database.query(SQL.rezumirItemRetirado, [
+        item.qnt_liberada,
+        item.id,
+      ]);
+    }
+
+    return ResponseController(res, HttpStatus.CREATED, T_PT.cadastrado, {
+      codigo,
+      id,
+    });
+  }
+
+  static async capturarSolicitacaoRespondida(req, res) {
+    const { idEstoque } = req.params;
+
+    const { rows } = await database.query();
+    return ResponseController(res, HttpStatus.OK, T_PT.capturado, {});
+  }
 }
 
 module.exports = ArmazemController;

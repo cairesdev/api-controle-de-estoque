@@ -28,4 +28,12 @@ module.exports = {
   INNER JOIN ARMAZEM_ORGAO AO ON PE.ID_ESTOQUE_ORIGEM = AO.ID
   WHERE AO.ID_ORGAO = $1 ORDER BY PE.DATA_VALIDADE DESC;
   `,
+
+  createEstoqueUnidade: `INSERT INTO estoque_unidade(
+	id, nome, data_entrada, codigo, qnt_entrada, qnt_disponivel, id_unidade, id_solicitacao)
+	VALUES ($1, (select nome from solicitacao where id = $2), $3, $4, $5, $6, $7, $8);`,
+
+  estocar_item_solicitado: `INSERT INTO produto_estocado (ID,ID_ESTOQUE_ORIGEM,DATA_VALIDADE,DATA_ULTIMA_MOVIMENTACAO,QNT_ENTRADA,QNT_DISPONIVEL,ID_PRODUTO) VALUES ($1, $2, (select data_validade from produto_estocado where id = $3), $4, $5, $6, (select id_produto from produto_estocado where id = $7));`,
+
+  rezumirItemRetirado: `UPDATE PRODUTO_ESTOCADO SET QNT_DISPONIVEL = QNT_DISPONIVEL - $1 WHERE ID = $2;`,
 };

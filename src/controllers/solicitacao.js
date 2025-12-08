@@ -78,6 +78,33 @@ class SolicitacaoController {
       itens,
     });
   }
+
+  static async getSolicitacaoeComparaEstoque(req, res) {
+    const { idSolicitacao, idEntidade } = req.params;
+
+    const { rows: itensSolicitacao } = await database.query(
+      SQL.getItensSolicitacao,
+      [idSolicitacao]
+    );
+
+    const arrayOfEstoque = [];
+    for await (let item of itensSolicitacao) {
+      let { rows } = await database.query(SQL.getProdutosDisponiveis, [
+        item.id_produto,
+        idEntidade,
+      ]);
+
+      item.disponiveis = rows;
+      arrayOfEstoque.push(item);
+    }
+
+    return ResponseController(
+      res,
+      httpStatus.OK,
+      T_PT.capturados,
+      arrayOfEstoque
+    );
+  }
 }
 
 module.exports = SolicitacaoController;

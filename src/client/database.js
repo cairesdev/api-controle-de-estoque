@@ -13,7 +13,9 @@ class PGPoolFactory {
       connectionTimeoutMillis: 5000,
       idleTimeoutMillis: 10000,
       query_timeout: 30000,
-      ssl: false,
+      ssl: {
+        rejectUnauthorized: false,
+      },
       max: parseInt(process.env.DB_POOL_MAX || "10", 10),
       ...config,
     });

@@ -18,4 +18,8 @@ router.get("/solicitacao/:idSolicitacao", (req, res, next) =>
   InterceptError(controller.getSolicitacao, req, res, next)
 );
 
+router.get("/solicitacao/:idSolicitacao/:idEntidade", (req, res, next) =>
+  InterceptError(controller.getSolicitacaoeComparaEstoque, req, res, next)
+);
+
 module.exports = router;
