@@ -69,7 +69,7 @@ class SolicitacaoController {
       idSolicitacao,
     ]);
 
-    if (visualizacao === "almoxarifado") {
+    if (visualizacao !== "unidade") {
       await database.query(SQL.setAsPendente, [idSolicitacao]);
     }
 

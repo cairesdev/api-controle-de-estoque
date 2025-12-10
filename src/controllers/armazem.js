@@ -180,6 +180,8 @@ class ArmazemController {
       ]);
     }
 
+    await database.query(SQL.update_solicitacao_status, [idSolicitacao]);
+
     return ResponseController(res, HttpStatus.CREATED, T_PT.cadastrado, {
       codigo,
       id,
@@ -187,10 +189,16 @@ class ArmazemController {
   }
 
   static async capturarSolicitacaoRespondida(req, res) {
-    const { idEstoque } = req.params;
-
-    const { rows } = await database.query();
-    return ResponseController(res, HttpStatus.OK, T_PT.capturado, {});
+    const { idEstoque, codigo } = req.params;
+    const { rows: estoque } = await database.query(SQL.getEstoque, [
+      idEstoque,
+      codigo,
+    ]);
+    const { rows: itens } = await database.query(SQL.getItens, [idEstoque]);
+    return ResponseController(res, HttpStatus.OK, T_PT.capturado, {
+      estoque: estoque[0],
+      itens,
+    });
   }
 }
 

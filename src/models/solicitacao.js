@@ -34,6 +34,6 @@ module.exports = {
   SELECT PE.QNT_DISPONIVEL, PE.ID, PE.data_validade, PE.ID_ESTOQUE_ORIGEM 
   FROM produto_estocado PE
   JOIN ARMAZEM_ORGAO AO ON PE.ID_ESTOQUE_ORIGEM = AO.ID 
-  WHERE PE.ID_PRODUTO = $1 AND AO.ID_ORGAO = $2 AND PE.QNT_DISPONIVEL <> 0 order by PE.data_validade asc LIMIT 1;
+  WHERE PE.ID_PRODUTO = $1 AND AO.ID_ORGAO = $2 AND PE.QNT_DISPONIVEL <> 0 order by PE.data_validade asc;
   `,
 };

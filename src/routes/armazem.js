@@ -36,4 +36,10 @@ router.get("/armazem/estoque/resumo/:idRemessa", (req, res, next) =>
 router.post("/solicitacao/:idSolicitacao/:idEntidade", (req, res, next) =>
   InterceptError(controller.liberaSolicitacao, req, res, next)
 );
+
+router.get(
+  "/armazem/estoque/comprovante/:idEstoque/:codigo",
+  (req, res, next) =>
+    InterceptError(controller.capturarSolicitacaoRespondida, req, res, next)
+);
 module.exports = router;
