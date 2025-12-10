@@ -145,6 +145,13 @@ class ArmazemController {
     return ResponseController(res, HttpStatus.OK, T_PT.capturados, rows);
   }
 
+  static async deleteItem(req, res) {
+    const { idItem } = req.params;
+    await database.query(SQL.removeOnUpdate, [idItem]);
+    await database.query(SQL.deleteItem, [idItem]);
+    return ResponseController(res, HttpStatus.OK, T_PT.atualizado, null);
+  }
+
   static async liberaSolicitacao(req, res) {
     const { idSolicitacao, idEntidade } = req.params;
     const data = req.body;
