@@ -8,7 +8,7 @@ module.exports = {
 
   verifica_usuario: `SELECT NIVEL FROM USUARIO WHERE ID = $1;`,
 
-  update_armazem: `UPDATE ARMAZEM_ORGAO SET QNT_REGISTRADA = $1 WHERE ID = $2;`,
+  update_armazem: `UPDATE ARMAZEM_ORGAO SET QNT_REGISTRADA = QNT_REGISTRADA + $1 WHERE ID = $2;`,
 
   estocar_produto: `INSERT INTO produto_estocado (id, id_estoque_origem, data_validade, data_ultima_movimentacao, qnt_entrada, qnt_disponivel, id_produto)
 	VALUES ($1, $2, $3, $4, $5, $6,(select id from produto where nome = $7));`,

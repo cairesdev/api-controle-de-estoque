@@ -122,7 +122,10 @@ class ArmazemController {
       codigo,
     ]);
 
-    return ResponseController(res, httpStatus.CREATED, T_PT.cadastrado, id);
+    return ResponseController(res, httpStatus.CREATED, T_PT.cadastrado, {
+      id,
+      codigo,
+    });
   }
 
   static async resumoRemessa(req, res) {

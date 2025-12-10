@@ -42,4 +42,5 @@ router.get(
   (req, res, next) =>
     InterceptError(controller.capturarSolicitacaoRespondida, req, res, next)
 );
+
 module.exports = router;
