@@ -13,6 +13,10 @@ router.get("/entidades", (req, res, next) =>
   InterceptError(controller.listaEntidades, req, res, next)
 );
 
+router.get("/entidade/estoque/disponivel/:idEntidade", (req, res, next) =>
+  InterceptError(controller.getEstoque, req, res, next)
+);
+
 router.get("/entidade/:idEntidade", (req, res, next) =>
   InterceptError(controller.listaEntidade, req, res, next)
 );

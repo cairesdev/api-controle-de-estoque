@@ -117,6 +117,12 @@ class OrgaoController {
 
     return ResponseController(res, httpStatus.OK, T_PT.atualizado, idEntidade);
   }
+
+  static async getEstoque(req, res) {
+    const { idEntidade } = req.params;
+    const { rows } = await database.query(SQL.getEstoque, [idEntidade]);
+    return ResponseController(res, httpStatus.OK, T_PT.capturado, rows);
+  }
 }
 
 module.exports = OrgaoController;
