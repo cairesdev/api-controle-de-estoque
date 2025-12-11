@@ -4,7 +4,7 @@ module.exports = {
 	VALUES ($1, $2, $3) on conflict (nome,und_medida) do nothing;
  `,
 
-  cadastro_armazem: `INSERT INTO armazem_orgao (ID, NOME, ID_TIPO_ESTOQUE, DATA_ENTRADA, ID_ORGAO, ID_RESPONSAVEL, LOCAL_ESTOCADO,CODIGO,QNT_REGISTRADA,qnt_disponivel) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,0,0);`,
+  cadastro_armazem: `INSERT INTO armazem_orgao (ID, NOME, ID_TIPO_ESTOQUE, DATA_ENTRADA, ID_ORGAO, ID_RESPONSAVEL, LOCAL_ESTOCADO,CODIGO,QNT_REGISTRADA) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,0);`,
 
   verifica_usuario: `SELECT NIVEL FROM USUARIO WHERE ID = $1;`,
 
@@ -33,6 +33,14 @@ module.exports = {
   WHERE AO.ID_ORGAO = $1 ORDER BY PE.DATA_VALIDADE DESC;
   `,
 
+  getAllEstoqueRemessa: `
+  SELECT PE.ID, P.NOME, PE.DATA_VALIDADE, PE.QNT_ENTRADA, PE.QNT_DISPONIVEL, P.UND_MEDIDA, AO.DATA_ENTRADA 
+  FROM PRODUTO_ESTOCADO PE
+  INNER JOIN PRODUTO P ON PE.ID_PRODUTO = P.ID
+  INNER JOIN ARMAZEM_ORGAO AO ON PE.ID_ESTOQUE_ORIGEM = AO.ID
+  WHERE AO.ID = $1 ORDER BY PE.DATA_VALIDADE DESC;
+  `,
+
   createEstoqueUnidade: `INSERT INTO estoque_unidade(
 	id, nome, data_entrada, codigo, qnt_entrada, qnt_disponivel, id_unidade, id_solicitacao)
 	VALUES ($1, (select nome from solicitacao where id = $2), $3, $4, $5, $6, $7, $8);`,
@@ -50,4 +58,6 @@ module.exports = {
   JOIN STATUS_SOLICITACAO SS ON S.ID_STATUS = SS.ID
   WHERE EU.ID = $1 AND EU.CODIGO = $2;
   `,
+
+  getAllProducts: `SELECT * FROM PRODUTO ORDER BY NOME ASC;`,
 };

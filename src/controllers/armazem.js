@@ -139,9 +139,17 @@ class ArmazemController {
     });
   }
 
-  static async getEstoques(req, res) {
+  static async getEstoquesEntidade(req, res) {
     const { idEntidade } = req.params;
     const { rows } = await database.query(SQL.getAllEstoque, [idEntidade]);
+    return ResponseController(res, HttpStatus.OK, T_PT.capturados, rows);
+  }
+
+  static async getEstoque(req, res) {
+    const { idEstoque } = req.params;
+    const { rows } = await database.query(SQL.getAllEstoqueRemessa, [
+      idEstoque,
+    ]);
     return ResponseController(res, HttpStatus.OK, T_PT.capturados, rows);
   }
 
@@ -209,6 +217,11 @@ class ArmazemController {
       estoque: estoque[0],
       itens,
     });
+  }
+
+  static async getListaProdutos(req, res) {
+    const { rows } = await database.query(SQL.getAllProducts, []);
+    return ResponseController(res, HttpStatus.OK, T_PT.capturados, rows);
   }
 }
 

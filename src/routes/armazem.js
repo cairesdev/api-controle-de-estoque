@@ -17,6 +17,10 @@ router.post(
     InterceptError(controller.cadastroItensXlsx, req, res, next)
 );
 
+router.get("/armazem/estoque/produtos", (req, res, next) =>
+  InterceptError(controller.getListaProdutos, req, res, next)
+);
+
 router.post("/armazem/individual/:idEstoque", (req, res, next) =>
   InterceptError(controller.cadastroIndividual, req, res, next)
 );
@@ -26,7 +30,11 @@ router.post("/armazem/estoque/:idEntidade", (req, res, next) =>
 );
 
 router.get("/armazem/estoque/:idEntidade", (req, res, next) =>
-  InterceptError(controller.getEstoques, req, res, next)
+  InterceptError(controller.getEstoquesEntidade, req, res, next)
+);
+
+router.get("/armazem/estoque/remessa/:idEstoque", (req, res, next) =>
+  InterceptError(controller.getEstoque, req, res, next)
 );
 
 router.get("/armazem/estoque/resumo/:idRemessa", (req, res, next) =>
