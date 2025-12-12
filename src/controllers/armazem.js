@@ -16,7 +16,10 @@ class ArmazemController {
     const data = req.body;
 
     const id = uuid();
-    const dateISO = new Date().toISOString();
+    const dateISO =
+      new Date()
+        .toLocaleString("sv-SE", { timeZone: "America/Sao_Paulo" })
+        .replace(" ", "T") + "-03:00";
 
     await database.query(SQL.estocar_item, [
       id,
@@ -54,7 +57,10 @@ class ArmazemController {
       );
     }
 
-    const dateISO = new Date().toISOString();
+    const dateISO =
+      new Date()
+        .toLocaleString("sv-SE", { timeZone: "America/Sao_Paulo" })
+        .replace(" ", "T") + "-03:00";
 
     for await (let item of json) {
       var id = uuid();
@@ -165,7 +171,11 @@ class ArmazemController {
     const data = req.body;
 
     const codigo = randomizeNumber(7, 12);
-    const dateISO = new Date().toISOString();
+    const dateISO =
+      new Date()
+        .toLocaleString("sv-SE", { timeZone: "America/Sao_Paulo" })
+        .replace(" ", "T") + "-03:00";
+
     const id = uuid();
 
     await database.query(SQL.createEstoqueUnidade, [

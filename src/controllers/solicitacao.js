@@ -10,7 +10,10 @@ class SolicitacaoController {
     const user = req.user;
 
     const id = uuid();
-    const dateISO = new Date().toISOString();
+    const dateISO =
+      new Date()
+        .toLocaleString("sv-SE", { timeZone: "America/Sao_Paulo" })
+        .replace(" ", "T") + "-03:00";
 
     await database.query(SQL.createSolicitacao, [
       id,
