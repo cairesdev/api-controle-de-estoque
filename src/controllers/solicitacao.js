@@ -16,7 +16,7 @@ class SolicitacaoController {
       id,
       idUnidade,
       idUnidade,
-      data.STATUS,
+      "e1d9ab68-ec2d-47b0-99aa-28bb2f6578f7", // ENVIADO
       dateISO,
       user.id,
       data.NOME,
