@@ -23,6 +23,7 @@ class SolicitacaoController {
       dateISO,
       user.id,
       data.NOME,
+      data.TIPO_ESTOQUE,
     ]);
 
     return ResponseController(res, httpStatus.CREATED, T_PT.cadastrado, id);

@@ -1,14 +1,15 @@
 module.exports = {
-  createSolicitacao: `INSERT INTO solicitacao (id, id_unidade, id_orgao, id_status, data_solicitacao, id_solicitante, nome) VALUES ($1,$2,(select id_orgao from unidade where id = $3),$4,$5,$6,$7);`,
+  createSolicitacao: `INSERT INTO solicitacao (id, id_unidade, id_orgao, id_status, data_solicitacao, id_solicitante, nome,id_tipo_estoque) VALUES ($1,$2,(select id_orgao from unidade where id = $3),$4,$5,$6,$7,$8);`,
 
   createItemSolicitado: `INSERT INTO produto_solicitado (id, id_solicitacao, id_produto, qnt_solicitada)
 	VALUES ($1, $2, $3, $4);`,
 
   getSolicitacoes: `
-  SELECT S.ID, S.NOME, S.DATA_SOLICITACAO, U.NOME as "solicitante", ST.NOME as "status", UND.NOME as "unidade", UND.id as "id_unidade"  
+  SELECT S.ID, S.NOME, S.DATA_SOLICITACAO, U.NOME as "solicitante", ST.NOME as "status", UND.NOME as "unidade", UND.id as "id_unidade",TE.nome as "tipo_solicitacao"
   FROM SOLICITACAO S 
   JOIN USUARIO U ON S.ID_SOLICITANTE = U.ID 
   JOIN STATUS_SOLICITACAO ST ON S.ID_STATUS = ST.ID
+  JOIN TIPO_ESTOQUE TE ON S.ID_TIPO_ESTOQUE = TE.ID 
   JOIN UNIDADE UND ON S.ID_UNIDADE = UND.ID
   WHERE S.ID_UNIDADE = $1 OR S.ID_ORGAO = $1 ORDER BY S.DATA_SOLICITACAO;
   `,

@@ -144,6 +144,17 @@ class ArmazemController {
       itens,
     });
   }
+  static async resumoRemessaUnidade(req, res) {
+    const { idRemessa } = req.params;
+    const { rows: itens } = await database.query(SQL.getItens, [idRemessa]);
+    const { rows: estoque } = await database.query(SQL.getRemessaUnidade, [
+      idRemessa,
+    ]);
+    return ResponseController(res, httpStatus.OK, T_PT.capturado, {
+      remessa: estoque[0],
+      itens,
+    });
+  }
 
   static async getEstoquesEntidade(req, res) {
     const { idEntidade } = req.params;
@@ -169,6 +180,7 @@ class ArmazemController {
   static async liberaSolicitacao(req, res) {
     const { idSolicitacao, idEntidade } = req.params;
     const data = req.body;
+    const user = req.user;
 
     const codigo = randomizeNumber(7, 12);
     const dateISO =
@@ -208,7 +220,11 @@ class ArmazemController {
       ]);
     }
 
-    await database.query(SQL.update_solicitacao_status, [idSolicitacao]);
+    await database.query(SQL.update_solicitacao_status, [
+      idSolicitacao,
+      req.user.id,
+      dateISO,
+    ]);
 
     return ResponseController(res, HttpStatus.CREATED, T_PT.cadastrado, {
       codigo,

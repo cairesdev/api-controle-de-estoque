@@ -25,6 +25,13 @@ module.exports = {
 
   getRemessa: `SELECT AO.QNT_REGISTRADA, AO.LOCAL_ESTOCADO, AO.DATA_ENTRADA, AO.CODIGO, U.NOME FROM ARMAZEM_ORGAO AO JOIN USUARIO U ON AO.ID_RESPONSAVEL = U.ID WHERE AO.ID = $1;`,
 
+  getRemessaUnidade: `SELECT EU.LOCAL_ESTOCADO, EU.DATA_ENTRADA, EU.CODIGO, EU.NOME as "nome_estoque", EU.QNT_ENTRADA,EU.QNT_DISPONIVEL, TE.NOME as "tipo_estoque", S.DATA_SOLICITACAO, S.DATA_ENCERRAMENTO, U.NOME as "solicitante"
+  FROM ESTOQUE_UNIDADE EU 
+  JOIN SOLICITACAO S ON EU.ID_SOLICITACAO = S.ID
+  JOIN TIPO_ESTOQUE TE ON S.ID_TIPO_ESTOQUE = TE.ID
+  JOIN USUARIO U ON S.ID_SOLICITANTE  = U.ID
+  WHERE EU.ID = $1;`,
+
   getAllEstoque: `
   SELECT PE.ID, P.NOME, PE.DATA_VALIDADE, PE.QNT_ENTRADA, PE.QNT_DISPONIVEL, P.UND_MEDIDA, AO.DATA_ENTRADA 
   FROM PRODUTO_ESTOCADO PE
@@ -42,14 +49,14 @@ module.exports = {
   `,
 
   createEstoqueUnidade: `INSERT INTO estoque_unidade(
-	id, nome, data_entrada, codigo, qnt_entrada, qnt_disponivel, id_unidade, id_solicitacao)
-	VALUES ($1, (select nome from solicitacao where id = $2), $3, $4, $5, $6, $7, $8);`,
+	id, nome, data_entrada, codigo, qnt_entrada, qnt_disponivel, id_unidade, id_solicitacao,id_tipo_estoque)
+	VALUES ($1, (select nome from solicitacao where id = $2), $3, $4, $5, $6, $7, $8,4);`,
 
   estocar_item_solicitado: `INSERT INTO produto_estocado (ID,ID_ESTOQUE_ORIGEM,DATA_VALIDADE,DATA_ULTIMA_MOVIMENTACAO,QNT_ENTRADA,QNT_DISPONIVEL,ID_PRODUTO) VALUES ($1, $2, (select data_validade from produto_estocado where id = $3), $4, $5, $6, (select id_produto from produto_estocado where id = $7));`,
 
   rezumirItemRetirado: `UPDATE PRODUTO_ESTOCADO SET QNT_DISPONIVEL = QNT_DISPONIVEL - $1 WHERE ID = $2;`,
 
-  update_solicitacao_status: `UPDATE SOLICITACAO SET ID_STATUS = 'd915a72e-09ae-49af-926d-a0c399fd1aba' WHERE ID = $1;`,
+  update_solicitacao_status: `UPDATE SOLICITACAO SET ID_STATUS = 'd915a72e-09ae-49af-926d-a0c399fd1aba', ID_DESPACHANTE = $2, DATA_ENCERRAMENTO = $3 WHERE ID = $1;`,
 
   getEstoque: `SELECT EU.CODIGO, EU.NOME, EU.DATA_ENTRADA, EU.QNT_ENTRADA, EU.QNT_DISPONIVEL, EU.LOCAL_ESTOCADO, U.NOME AS "solicitante", S.DATA_SOLICITACAO, SS.NOME AS "status"
   FROM ESTOQUE_UNIDADE EU
