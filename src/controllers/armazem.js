@@ -173,6 +173,8 @@ class ArmazemController {
   static async deleteItem(req, res) {
     const { idItem } = req.params;
     await database.query(SQL.removeOnUpdate, [idItem]);
+    await database.query(SQL.removeOnUpdateEstoqueUnidade, [idItem]);
+
     await database.query(SQL.deleteItem, [idItem]);
     return ResponseController(res, HttpStatus.OK, T_PT.atualizado, null);
   }
@@ -180,7 +182,6 @@ class ArmazemController {
   static async liberaSolicitacao(req, res) {
     const { idSolicitacao, idEntidade } = req.params;
     const data = req.body;
-    const user = req.user;
 
     const codigo = randomizeNumber(7, 12);
     const dateISO =
