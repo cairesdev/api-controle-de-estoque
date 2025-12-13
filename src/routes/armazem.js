@@ -13,8 +13,7 @@ const controller = require("../controllers/armazem");
 router.post(
   "/armazem/xlsx/:idEstoque",
   upload.single("ARQUIVO"),
-  (req, res, next) =>
-    InterceptError(controller.cadastroItensXlsx, req, res, next)
+  controller.cadastroItensXlsx
 );
 
 router.get("/armazem/estoque/produtos", (req, res, next) =>

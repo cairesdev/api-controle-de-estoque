@@ -38,53 +38,66 @@ class ArmazemController {
     const { idEstoque } = req.params;
     const file = req.file;
 
-    const workbook = xlsx.read(file.buffer, {
-      type: "buffer",
-      cellDates: true,
-    });
+    try {
+      const workbook = xlsx.read(file.buffer, {
+        type: "buffer",
+        cellDates: true,
+      });
 
-    const sheetName = workbook.SheetNames[0];
-    const sheet = workbook.Sheets[sheetName];
+      const sheetName = workbook.SheetNames[0];
+      const sheet = workbook.Sheets[sheetName];
 
-    const json = xlsx.utils.sheet_to_json(sheet, { defval: "" });
+      const json = xlsx.utils.sheet_to_json(sheet, { defval: "" });
 
-    if (json.length === 0) {
+      if (json.length === 0) {
+        return ResponseController(
+          res,
+          httpStatus.NO_CONTENT,
+          T_PT.no_content,
+          null
+        );
+      }
+
+      const dateISO =
+        new Date()
+          .toLocaleString("sv-SE", { timeZone: "America/Sao_Paulo" })
+          .replace(" ", "T") + "-03:00";
+
+      for await (let item of json) {
+        var id = uuid();
+        await database.query(SQL.cadastro_produto, [
+          id,
+          item.NOME,
+          item.UNIDADE,
+        ]);
+
+        await database.query(SQL.estocar_produto, [
+          id,
+          idEstoque,
+          item.DATA_VALIDADE == "" ? null : item.DATA_VALIDADE,
+          dateISO,
+          item.QUANTIDADE,
+          item.QUANTIDADE,
+          item.NOME,
+        ]);
+      }
+
+      await database.query(SQL.update_armazem, [json.length, idEstoque]);
+
       return ResponseController(
         res,
-        httpStatus.NO_CONTENT,
-        T_PT.no_content,
-        null
+        httpStatus.CREATED,
+        T_PT.cadastrado,
+        json.length
+      );
+    } catch (error) {
+      return ResponseController(
+        res,
+        httpStatus.CREATED,
+        T_PT.cadastrado,
+        error.message
       );
     }
-
-    const dateISO =
-      new Date()
-        .toLocaleString("sv-SE", { timeZone: "America/Sao_Paulo" })
-        .replace(" ", "T") + "-03:00";
-
-    for await (let item of json) {
-      var id = uuid();
-      await database.query(SQL.cadastro_produto, [id, item.NOME, item.UNIDADE]);
-
-      await database.query(SQL.estocar_produto, [
-        id,
-        idEstoque,
-        item.DATA_VALIDADE == "" ? null : item.DATA_VALIDADE,
-        dateISO,
-        item.QUANTIDADE,
-        item.QUANTIDADE,
-        item.NOME,
-      ]);
-    }
-
-    await database.query(SQL.update_armazem, [json.length, idEstoque]);
-
-    return ResponseController(
-      res,
-      httpStatus.CREATED,
-      T_PT.cadastrado,
-      json.length
-    );
   }
 
   static async createArmazem(req, res) {
