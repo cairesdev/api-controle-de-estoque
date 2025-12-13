@@ -170,6 +170,22 @@ class ArmazemController {
     return ResponseController(res, HttpStatus.OK, T_PT.capturados, rows);
   }
 
+  static async getAllItensUnidade(req, res) {
+    const { idUnidade } = req.params;
+    const { rows } = await database.query(SQL.getAllItensUnidade, [idUnidade]);
+    return ResponseController(res, HttpStatus.OK, T_PT.capturados, rows);
+  }
+
+  static async updateQuantidadeUtilizada(req, res) {
+    const { idProduto } = req.params;
+    const data = req.body;
+    await database.query(SQL.updateQuantidadeUtilizada, [
+      data.QNT_SOLICITADA,
+      idProduto,
+    ]);
+    return ResponseController(res, HttpStatus.OK, T_PT.capturados, null);
+  }
+
   static async deleteItem(req, res) {
     const { idItem } = req.params;
     await database.query(SQL.removeOnUpdate, [idItem]);

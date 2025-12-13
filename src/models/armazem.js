@@ -49,6 +49,13 @@ module.exports = {
   INNER JOIN ARMAZEM_ORGAO AO ON PE.ID_ESTOQUE_ORIGEM = AO.ID
   WHERE AO.ID = $1 ORDER BY PE.DATA_VALIDADE DESC;
   `,
+  getAllItensUnidade: `
+  SELECT PE.ID, P.NOME, PE.DATA_VALIDADE, PE.QNT_ENTRADA, PE.QNT_DISPONIVEL, P.UND_MEDIDA, EU.DATA_ENTRADA 
+  FROM PRODUTO_ESTOCADO PE
+  INNER JOIN PRODUTO P ON PE.ID_PRODUTO = P.ID
+  INNER JOIN ESTOQUE_UNIDADE EU ON PE.ID_ESTOQUE_ORIGEM = EU.ID
+  WHERE EU.ID_UNIDADE = $1 AND PE.QNT_DISPONIVEL <> 0 ORDER BY PE.DATA_VALIDADE DESC;
+  `,
 
   createEstoqueUnidade: `INSERT INTO estoque_unidade(
 	id, nome, data_entrada, codigo, qnt_entrada, qnt_disponivel, id_unidade, id_solicitacao,id_tipo_estoque)
@@ -69,4 +76,6 @@ module.exports = {
   `,
 
   getAllProducts: `SELECT * FROM PRODUTO ORDER BY NOME ASC;`,
+
+  updateQuantidadeUtilizada: `UPDATE PRODUTO_ESTOCADO SET QNT_DISPONIVEL = QNT_DISPONIVEL - $1 WHERE ID = $2;`,
 };

@@ -29,6 +29,7 @@ app.use(
   cors({
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
+    origin: process.env.NEXT_FRONTEND_DNS,
   })
 );
 

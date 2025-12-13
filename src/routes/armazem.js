@@ -21,6 +21,14 @@ router.get("/armazem/estoque/produtos", (req, res, next) =>
   InterceptError(controller.getListaProdutos, req, res, next)
 );
 
+router.get("/armazem/estoque/itens-unidade/:idUnidade", (req, res, next) =>
+  InterceptError(controller.getAllItensUnidade, req, res, next)
+);
+
+router.patch("/armazem/estoque/itens-utilizados/:idProduto", (req, res, next) =>
+  InterceptError(controller.updateQuantidadeUtilizada, req, res, next)
+);
+
 router.post("/armazem/individual/:idEstoque", (req, res, next) =>
   InterceptError(controller.cadastroIndividual, req, res, next)
 );
