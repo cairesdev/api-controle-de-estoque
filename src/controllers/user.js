@@ -89,7 +89,7 @@ class UserController {
           nome: dados_usuario[0].nome,
         },
         JWT_SECRET,
-        { expiresIn: "1h" }
+        { expiresIn: "3h" }
       );
 
       const user = {
@@ -98,7 +98,7 @@ class UserController {
         descricao: dados_usuario[0].descricao,
         login: data.username,
         nivel: dados_usuario[0].nivel,
-        expires_on: new Date(Date.now() + 1 * 60 * 60 * 1000),
+        expires_on: new Date(Date.now() + 3 * 60 * 60 * 1000),
         entidade_nome: dados_usuario[0].entidade,
         entidade_id: dados_usuario[0].id_orgao,
         unidade_id: dados_usuario[0].id_unidade,

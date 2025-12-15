@@ -32,7 +32,7 @@ module.exports = {
   setAsPendente: `update solicitacao set id_status = '7c92f4cf-f76b-4333-ac06-6b60bf2b2518' where id = $1 and id_status = 'e1d9ab68-ec2d-47b0-99aa-28bb2f6578f7';`,
 
   getProdutosDisponiveis: `
-  SELECT PE.QNT_DISPONIVEL, PE.ID, PE.data_validade, PE.ID_ESTOQUE_ORIGEM 
+  SELECT PE.QNT_DISPONIVEL, PE.ID, PE.data_validade, PE.ID_ESTOQUE_ORIGEM, AO.NOME,AO.CODIGO 
   FROM produto_estocado PE
   JOIN ARMAZEM_ORGAO AO ON PE.ID_ESTOQUE_ORIGEM = AO.ID 
   WHERE PE.ID_PRODUTO = $1 AND AO.ID_ORGAO = $2 AND PE.QNT_DISPONIVEL <> 0 order by PE.data_validade asc;
