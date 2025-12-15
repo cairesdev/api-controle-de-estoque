@@ -29,12 +29,20 @@ module.exports = {
   WHERE PS.ID_SOLICITACAO = $1;
   `,
 
-  setAsPendente: `update solicitacao set id_status = '7c92f4cf-f76b-4333-ac06-6b60bf2b2518' where id = $1;`,
+  setAsPendente: `update solicitacao set id_status = '7c92f4cf-f76b-4333-ac06-6b60bf2b2518' where id = $1 and id_status = 'e1d9ab68-ec2d-47b0-99aa-28bb2f6578f7';`,
 
   getProdutosDisponiveis: `
   SELECT PE.QNT_DISPONIVEL, PE.ID, PE.data_validade, PE.ID_ESTOQUE_ORIGEM 
   FROM produto_estocado PE
   JOIN ARMAZEM_ORGAO AO ON PE.ID_ESTOQUE_ORIGEM = AO.ID 
   WHERE PE.ID_PRODUTO = $1 AND AO.ID_ORGAO = $2 AND PE.QNT_DISPONIVEL <> 0 order by PE.data_validade asc;
+  `,
+
+  getAllItensUnidade: `
+  SELECT PE.ID, P.NOME, PE.DATA_VALIDADE, PE.QNT_ENTRADA, PE.QNT_DISPONIVEL, P.UND_MEDIDA, EU.DATA_ENTRADA 
+  FROM PRODUTO_ESTOCADO PE
+  INNER JOIN PRODUTO P ON PE.ID_PRODUTO = P.ID
+  INNER JOIN ESTOQUE_UNIDADE EU ON PE.ID_ESTOQUE_ORIGEM = EU.ID
+  WHERE EU.ID_UNIDADE = $1 AND PE.QNT_DISPONIVEL <> 0 AND P.ID = $2 ORDER BY PE.DATA_VALIDADE DESC;
   `,
 };

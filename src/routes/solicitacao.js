@@ -15,7 +15,7 @@ router.get("/solicitacoes/:idUnidade", (req, res, next) =>
   InterceptError(controller.getSolicitacoes, req, res, next)
 );
 
-router.get("/solicitacao/:idSolicitacao", (req, res, next) =>
+router.get("/solicitacao/:idSolicitacao/unidade/:idUnidade", (req, res, next) =>
   InterceptError(controller.getSolicitacao, req, res, next)
 );
 

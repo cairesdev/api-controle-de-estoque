@@ -52,7 +52,7 @@ class SolicitacaoController {
   }
 
   static async getSolicitacao(req, res) {
-    const { idSolicitacao } = req.params;
+    const { idSolicitacao, idUnidade } = req.params;
     const { visualizacao } = req.query;
 
     const tiposVisualizacao = ["administrativa", "unidade", "almoxarifado"];
@@ -72,6 +72,14 @@ class SolicitacaoController {
     const { rows: itens } = await database.query(SQL.getItensSolicitacao, [
       idSolicitacao,
     ]);
+
+    for await (let item of itens) {
+      const { rows: itensPresentes } = await database.query(
+        SQL.getAllItensUnidade,
+        [idUnidade, item.id_produto]
+      );
+      item.disponiveis = itensPresentes;
+    }
 
     if (visualizacao !== "unidade") {
       await database.query(SQL.setAsPendente, [idSolicitacao]);
