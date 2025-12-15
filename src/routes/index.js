@@ -5,7 +5,9 @@ const orgao = require("./orgao");
 const unidade = require("./unidade");
 const armazem = require("./armazem");
 const solicitacao = require("./solicitacao");
+const extras = require("./extra");
 
+router.use("/v1", extras);
 router.use("/v1", user);
 router.use("/v1", orgao);
 router.use("/v1", unidade);
