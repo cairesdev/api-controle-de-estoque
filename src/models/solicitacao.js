@@ -15,7 +15,7 @@ module.exports = {
   `,
 
   getSolicitacao: `
-  SELECT S.ID, S.NOME, S.DATA_SOLICITACAO, U.NOME as "solicitante", ST.NOME as "status", UND.NOME as "unidade" 
+  SELECT S.ID, S.NOME, S.DATA_SOLICITACAO, S.DATA_ENCERRAMENTO,U.NOME as "solicitante", ST.NOME as "status", UND.NOME as "unidade" 
   FROM SOLICITACAO S 
   JOIN USUARIO U ON S.ID_SOLICITANTE = U.ID 
   JOIN STATUS_SOLICITACAO ST ON S.ID_STATUS = ST.ID 

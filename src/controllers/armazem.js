@@ -229,6 +229,7 @@ class ArmazemController {
       data.RETIRADAS.length,
       data.DESTINATARIO,
       data.SOLICITACAO,
+      idSolicitacao,
     ]);
 
     for await (let item of data.RETIRADAS) {
