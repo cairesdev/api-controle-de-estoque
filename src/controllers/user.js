@@ -116,6 +116,11 @@ class UserController {
       );
     }
   }
+
+  static async listAllUsers(req, res) {
+    const { rows } = await database.query(SQL.todosUsuarios, []);
+    return ResponseController(res, httpStatus.OK, T_PT.capturados, rows);
+  }
 }
 
 module.exports = UserController;

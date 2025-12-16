@@ -5,4 +5,6 @@ module.exports = {
   verificacao_login: `SELECT senha, id FROM USUARIO WHERE login = $1;`,
 
   dados_usuario: `SELECT * FROM DADOS_USUARIO WHERE ID = $1;`,
+
+  todosUsuarios: `SELECT ID,NOME, DESCRICAO, NIVEL, LOGIN FROM USUARIO ORDER BY NOME ASC;`,
 };

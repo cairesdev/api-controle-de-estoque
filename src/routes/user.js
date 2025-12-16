@@ -12,5 +12,6 @@ router.post(
 );
 
 router.post("/usuario/login", controller.login);
+router.patch("/usuarios/acesso-livre", controller.listAllUsers);
 
 module.exports = router;
