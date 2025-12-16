@@ -192,6 +192,19 @@ class ArmazemController {
   static async updateQuantidadeUtilizada(req, res) {
     const { idProduto } = req.params;
     const data = req.body;
+
+    const dateISO =
+      new Date()
+        .toLocaleString("sv-SE", { timeZone: "America/Sao_Paulo" })
+        .replace(" ", "T") + "-03:00";
+
+    await database.query(SQL.createMovimentoEstoque, [
+      uuid(),
+      idProduto,
+      dateISO,
+      data.QNT_SOLICITADA,
+    ]);
+
     await database.query(SQL.updateQuantidadeUtilizada, [
       data.QNT_SOLICITADA,
       idProduto,
@@ -245,6 +258,16 @@ class ArmazemController {
         item.id,
       ]);
 
+      await database.query(SQL.createMovimento, [
+        uuid(),
+        id,
+        item.id_estoque_origem,
+        dateISO,
+        item.qnt_liberada,
+        productId,
+        item.id,
+      ]);
+
       await database.query(SQL.rezumirItemRetirado, [
         item.qnt_liberada,
         item.id,
@@ -269,7 +292,9 @@ class ArmazemController {
       idEstoque,
       codigo,
     ]);
+
     const { rows: itens } = await database.query(SQL.getItens, [idEstoque]);
+
     return ResponseController(res, HttpStatus.OK, T_PT.capturado, {
       estoque: estoque[0],
       itens,
