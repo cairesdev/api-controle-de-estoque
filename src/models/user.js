@@ -7,4 +7,6 @@ module.exports = {
   dados_usuario: `SELECT * FROM DADOS_USUARIO WHERE ID = $1;`,
 
   todosUsuarios: `SELECT ID,NOME, DESCRICAO, NIVEL, LOGIN FROM USUARIO ORDER BY NOME ASC;`,
+  deleteUsuario: `DELETE FROM USUARIO WHERE ID = $1;`,
+  updatePass: `UPDATE USUARIO SET SENHA = $1 WHERE LOGIN = $2;`,
 };

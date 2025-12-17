@@ -121,6 +121,20 @@ class UserController {
     const { rows } = await database.query(SQL.todosUsuarios, []);
     return ResponseController(res, httpStatus.OK, T_PT.capturados, rows);
   }
+
+  static async deleteUsuario(req, res) {
+    const { idUsuario } = req.params;
+    await database.query(SQL.deleteUsuario, [idUsuario]);
+    return ResponseController(res, httpStatus.OK, T_PT.apagado, null);
+  }
+
+  static async updatePassword(req, res) {
+    const { user } = req.params;
+    const data = req.body;
+    const hashPassword = await bcrypt.hash(data.SENHA, 14);
+    await database.query(SQL.updatePass, [hashPassword, user]);
+    return ResponseController(res, httpStatus.OK, T_PT.atualizado, null);
+  }
 }
 
 module.exports = UserController;

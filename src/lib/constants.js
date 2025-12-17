@@ -13,6 +13,7 @@ const T_PT = {
   atualizado: "Atualizado com sucesso.",
   no_content: "Nenhum item presente na requisição.",
   nao_autorizado: "Usuario não autorizado.",
+  apagado: "Apagado com sucesso.",
 
   // CONFLITOS
   cft_nome: "Nome já registrado na base de dados.",
