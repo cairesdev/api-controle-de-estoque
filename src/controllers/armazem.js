@@ -294,6 +294,12 @@ class ArmazemController {
     ]);
 
     const { rows: itens } = await database.query(SQL.getItens, [idEstoque]);
+    for await (let item of itens) {
+      const { rows: origem } = await database.query(SQL.selectOrigem, [
+        item.id,
+      ]);
+      item.origem = origem[0];
+    }
 
     return ResponseController(res, HttpStatus.OK, T_PT.capturado, {
       estoque: estoque[0],
