@@ -215,6 +215,17 @@ class ArmazemController {
   static async deleteItem(req, res) {
     const { idItem } = req.params;
     await database.query(SQL.removeOnUpdate, [idItem]);
+    const dateISO =
+      new Date()
+        .toLocaleString("sv-SE", { timeZone: "America/Sao_Paulo" })
+        .replace(" ", "T") + "-03:00";
+    await database.query(SQL.movimentaDelecaoProduto, [
+      uuid(),
+      idItem,
+      dateISO,
+      idItem,
+      req.user.id,
+    ]);
     await database.query(SQL.removeOnUpdateEstoqueUnidade, [idItem]);
 
     await database.query(SQL.deleteItem, [idItem]);

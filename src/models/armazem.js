@@ -17,7 +17,7 @@ module.exports = {
 
   getItens: `SELECT PE.ID, P.NOME, PE.QNT_ENTRADA,PE.QNT_DISPONIVEL, PE.DATA_VALIDADE, P.UND_MEDIDA FROM produto_estocado PE
   JOIN PRODUTO P ON PE.ID_PRODUTO = P.ID
-  WHERE ID_ESTOQUE_ORIGEM = $1;`,
+  WHERE ID_ESTOQUE_ORIGEM = $1 AND EXCLUIDO = 0;`,
 
   selectOrigem: `SELECT AO.CODIGO, AO.NOME 
   FROM ARMAZEM_ORGAO AO 
@@ -25,9 +25,11 @@ module.exports = {
   WHERE MA.ID_PRODUTO_DESTINO = $1;
   `,
 
-  deleteItem: `DELETE FROM produto_estocado WHERE ID = $1;`,
+  deleteItem: `UPDATE produto_estocado SET excluido = 1 WHERE ID = $1;`,
 
   removeOnUpdate: `UPDATE armazem_orgao SET QNT_REGISTRADA = QNT_REGISTRADA -1 WHERE ID = (SELECT ID_ESTOQUE_ORIGEM FROM produto_estocado WHERE ID = $1);`,
+
+  movimentaDelecaoProduto: `INSERT INTO MOVIMENTACAO_ESTOQUE (id, id_produto_estocado, data_movimentacao, qnt_movimentada, id_tipo_movimentacao,id_usuario) values ($1,$2,$3,(select QNT_DISPONIVEL from produto_estocado where id = $4),'54-24c4-8330-94f5-edddeeb076f7',$5);`,
 
   removeOnUpdateEstoqueUnidade: `UPDATE estoque_unidade SET QNT_DISPONIVEL = QNT_DISPONIVEL -1 WHERE ID = (SELECT ID_ESTOQUE_ORIGEM FROM produto_estocado WHERE ID = $1);`,
 
@@ -49,7 +51,7 @@ module.exports = {
   FROM PRODUTO_ESTOCADO PE
   INNER JOIN PRODUTO P ON PE.ID_PRODUTO = P.ID
   INNER JOIN ARMAZEM_ORGAO AO ON PE.ID_ESTOQUE_ORIGEM = AO.ID
-  WHERE AO.ID_ORGAO = $1 ORDER BY PE.DATA_VALIDADE DESC;
+  WHERE AO.ID_ORGAO = $1 AND EXCLUIDO = 0 ORDER BY PE.DATA_VALIDADE DESC;
   `,
 
   getAllEstoqueRemessa: `
@@ -57,7 +59,7 @@ module.exports = {
   FROM PRODUTO_ESTOCADO PE
   INNER JOIN PRODUTO P ON PE.ID_PRODUTO = P.ID
   INNER JOIN ARMAZEM_ORGAO AO ON PE.ID_ESTOQUE_ORIGEM = AO.ID
-  WHERE AO.ID = $1 ORDER BY PE.DATA_VALIDADE DESC;
+  WHERE AO.ID = $1 AND EXCLUIDO = 0 ORDER BY PE.DATA_VALIDADE DESC;
   `,
 
   getAllItensUnidade: `
@@ -65,7 +67,7 @@ module.exports = {
   FROM PRODUTO_ESTOCADO PE
   INNER JOIN PRODUTO P ON PE.ID_PRODUTO = P.ID
   INNER JOIN ESTOQUE_UNIDADE EU ON PE.ID_ESTOQUE_ORIGEM = EU.ID
-  WHERE EU.ID_UNIDADE = $1 AND PE.QNT_DISPONIVEL <> 0 ORDER BY PE.DATA_VALIDADE DESC;
+  WHERE EU.ID_UNIDADE = $1 AND PE.QNT_DISPONIVEL <> 0 AND EXCLUIDO = 0 ORDER BY PE.DATA_VALIDADE DESC;
   `,
 
   createEstoqueUnidade: `INSERT INTO estoque_unidade(
