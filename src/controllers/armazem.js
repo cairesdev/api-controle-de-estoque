@@ -224,11 +224,37 @@ class ArmazemController {
       idItem,
       dateISO,
       idItem,
+      "54-24c4-8330-94f5-edddeeb076f7",
       req.user.id,
     ]);
     await database.query(SQL.removeOnUpdateEstoqueUnidade, [idItem]);
 
     await database.query(SQL.deleteItem, [idItem]);
+    return ResponseController(res, HttpStatus.OK, T_PT.atualizado, null);
+  }
+
+  static async deleteArmazem(req, res) {
+    const { idArmazem } = req.params;
+
+    const { rows: itens } = await database.query(SQL.getItens, [idArmazem]);
+    const dateISO =
+      new Date()
+        .toLocaleString("sv-SE", { timeZone: "America/Sao_Paulo" })
+        .replace(" ", "T") + "-03:00";
+
+    for await (let item of itens) {
+      await database.query(SQL.deleteItem, [item.id]);
+      await database.query(SQL.movimentaDelecaoProduto, [
+        uuid(),
+        item.id,
+        dateISO,
+        item.id,
+        "4-ccc4-8325-9437-512d3ebf24f8",
+        req.user.id,
+      ]);
+    }
+
+    await database.query(SQL.deleteArmazem, [idArmazem]);
     return ResponseController(res, HttpStatus.OK, T_PT.atualizado, null);
   }
 

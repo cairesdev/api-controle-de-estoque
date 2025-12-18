@@ -56,6 +56,10 @@ router.delete("/armazem/estoque/item/:idItem", (req, res, next) =>
   InterceptError(controller.deleteItem, req, res, next)
 );
 
+router.delete("/armazem/estoque/remessa/:idArmazem", (req, res, next) =>
+  InterceptError(controller.deleteArmazem, req, res, next)
+);
+
 router.post("/solicitacao/:idSolicitacao/:idEntidade", (req, res, next) =>
   InterceptError(controller.liberaSolicitacao, req, res, next)
 );

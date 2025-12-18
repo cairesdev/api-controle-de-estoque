@@ -17,7 +17,7 @@ module.exports = {
 
   getItens: `SELECT PE.ID, P.NOME, PE.QNT_ENTRADA,PE.QNT_DISPONIVEL, PE.DATA_VALIDADE, P.UND_MEDIDA FROM produto_estocado PE
   JOIN PRODUTO P ON PE.ID_PRODUTO = P.ID
-  WHERE ID_ESTOQUE_ORIGEM = $1 AND EXCLUIDO = 0;`,
+  WHERE ID_ESTOQUE_ORIGEM = $1 AND PE.EXCLUIDO = 0;`,
 
   selectOrigem: `SELECT AO.CODIGO, AO.NOME 
   FROM ARMAZEM_ORGAO AO 
@@ -26,10 +26,11 @@ module.exports = {
   `,
 
   deleteItem: `UPDATE produto_estocado SET excluido = 1 WHERE ID = $1;`,
+  deleteArmazem: `UPDATE armazem_orgao SET excluido = 1 WHERE ID = $1;`,
 
   removeOnUpdate: `UPDATE armazem_orgao SET QNT_REGISTRADA = QNT_REGISTRADA -1 WHERE ID = (SELECT ID_ESTOQUE_ORIGEM FROM produto_estocado WHERE ID = $1);`,
 
-  movimentaDelecaoProduto: `INSERT INTO MOVIMENTACAO_ESTOQUE (id, id_produto_estocado, data_movimentacao, qnt_movimentada, id_tipo_movimentacao,id_usuario) values ($1,$2,$3,(select QNT_DISPONIVEL from produto_estocado where id = $4),'54-24c4-8330-94f5-edddeeb076f7',$5);`,
+  movimentaDelecaoProduto: `INSERT INTO MOVIMENTACAO_ESTOQUE (id, id_produto_estocado, data_movimentacao, qnt_movimentada, id_tipo_movimentacao,id_usuario) values ($1,$2,$3,(select QNT_DISPONIVEL from produto_estocado where id = $4),$5,$6);`,
 
   removeOnUpdateEstoqueUnidade: `UPDATE estoque_unidade SET QNT_DISPONIVEL = QNT_DISPONIVEL -1 WHERE ID = (SELECT ID_ESTOQUE_ORIGEM FROM produto_estocado WHERE ID = $1);`,
 
@@ -37,7 +38,7 @@ module.exports = {
   FROM ARMAZEM_ORGAO AO 
   LEFT JOIN USUARIO U ON AO.ID_RESPONSAVEL = U.ID
   LEFT JOIN TIPO_ESTOQUE TE ON AO.ID_TIPO_ESTOQUE = TE.ID
-  WHERE AO.ID = $1;`,
+  WHERE AO.ID = $1 AND AO.EXCLUIDO = 0;`,
 
   getRemessaUnidade: `SELECT EU.LOCAL_ESTOCADO, EU.DATA_ENTRADA, EU.CODIGO, EU.NOME as "nome_estoque", EU.QNT_ENTRADA,EU.QNT_DISPONIVEL, TE.NOME as "tipo_estoque", S.DATA_SOLICITACAO, S.DATA_ENCERRAMENTO, U.NOME as "solicitante"
   FROM ESTOQUE_UNIDADE EU 
@@ -51,7 +52,7 @@ module.exports = {
   FROM PRODUTO_ESTOCADO PE
   INNER JOIN PRODUTO P ON PE.ID_PRODUTO = P.ID
   INNER JOIN ARMAZEM_ORGAO AO ON PE.ID_ESTOQUE_ORIGEM = AO.ID
-  WHERE AO.ID_ORGAO = $1 AND EXCLUIDO = 0 ORDER BY PE.DATA_VALIDADE DESC;
+  WHERE AO.ID_ORGAO = $1 AND PE.EXCLUIDO = 0 ORDER BY PE.DATA_VALIDADE DESC;
   `,
 
   getAllEstoqueRemessa: `
@@ -59,7 +60,7 @@ module.exports = {
   FROM PRODUTO_ESTOCADO PE
   INNER JOIN PRODUTO P ON PE.ID_PRODUTO = P.ID
   INNER JOIN ARMAZEM_ORGAO AO ON PE.ID_ESTOQUE_ORIGEM = AO.ID
-  WHERE AO.ID = $1 AND EXCLUIDO = 0 ORDER BY PE.DATA_VALIDADE DESC;
+  WHERE AO.ID = $1 AND PE.EXCLUIDO = 0 ORDER BY PE.DATA_VALIDADE DESC;
   `,
 
   getAllItensUnidade: `
@@ -67,7 +68,7 @@ module.exports = {
   FROM PRODUTO_ESTOCADO PE
   INNER JOIN PRODUTO P ON PE.ID_PRODUTO = P.ID
   INNER JOIN ESTOQUE_UNIDADE EU ON PE.ID_ESTOQUE_ORIGEM = EU.ID
-  WHERE EU.ID_UNIDADE = $1 AND PE.QNT_DISPONIVEL <> 0 AND EXCLUIDO = 0 ORDER BY PE.DATA_VALIDADE DESC;
+  WHERE EU.ID_UNIDADE = $1 AND PE.QNT_DISPONIVEL <> 0 AND PE.EXCLUIDO = 0 ORDER BY PE.DATA_VALIDADE DESC;
   `,
 
   createEstoqueUnidade: `INSERT INTO estoque_unidade(
