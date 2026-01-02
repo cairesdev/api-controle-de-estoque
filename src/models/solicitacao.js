@@ -14,6 +14,16 @@ module.exports = {
   WHERE S.ID_UNIDADE = $1 OR S.ID_ORGAO = $1 ORDER BY S.DATA_SOLICITACAO;
   `,
 
+  getSolicitacoesLiberadas: `
+  SELECT S.ID, S.NOME, S.DATA_SOLICITACAO, U.NOME as "solicitante", ST.NOME as "status", UND.NOME as "unidade", UND.id as "id_unidade",TE.nome as "tipo_solicitacao"
+  FROM SOLICITACAO S 
+  JOIN USUARIO U ON S.ID_SOLICITANTE = U.ID 
+  JOIN STATUS_SOLICITACAO ST ON S.ID_STATUS = ST.ID
+  JOIN TIPO_ESTOQUE TE ON S.ID_TIPO_ESTOQUE = TE.ID 
+  JOIN UNIDADE UND ON S.ID_UNIDADE = UND.ID
+  WHERE S.ID_UNIDADE = $1 OR S.ID_ORGAO = $1 AND S.id_status = 'd915a72e-09ae-49af-926d-a0c399fd1aba' ORDER BY S.DATA_SOLICITACAO;
+  `,
+
   getSolicitacao: `
   SELECT S.ID, S.NOME, S.DATA_SOLICITACAO, S.DATA_ENCERRAMENTO,U.NOME as "solicitante", ST.NOME as "status", UND.NOME as "unidade" 
   FROM SOLICITACAO S 

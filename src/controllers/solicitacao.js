@@ -51,6 +51,12 @@ class SolicitacaoController {
     return ResponseController(res, httpStatus.OK, T_PT.capturados, rows);
   }
 
+  static async getSolicitacoesLiberadas(req, res) {
+    const { idUnidade } = req.params;
+    const { rows } = await database.query(SQL.getSolicitacoes, [idUnidade]);
+    return ResponseController(res, httpStatus.OK, T_PT.capturados, rows);
+  }
+
   static async getSolicitacao(req, res) {
     const { idSolicitacao, idUnidade } = req.params;
     const { visualizacao } = req.query;
@@ -73,15 +79,15 @@ class SolicitacaoController {
       idSolicitacao,
     ]);
 
-    for await (let item of itens) {
-      const { rows: itensPresentes } = await database.query(
-        SQL.getAllItensUnidade,
-        [idUnidade, item.id_produto]
-      );
-      item.disponiveis = itensPresentes;
-    }
-
     if (visualizacao !== "unidade") {
+      for await (let item of itens) {
+        const { rows: itensPresentes } = await database.query(
+          SQL.getAllItensUnidade,
+          [idUnidade, item.id_produto]
+        );
+        item.disponiveis = itensPresentes;
+      }
+
       await database.query(SQL.setAsPendente, [idSolicitacao]);
     }
 
