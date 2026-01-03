@@ -33,6 +33,7 @@ class SolicitacaoController {
     const { idSolicitacao } = req.params;
     const data = req.body;
 
+    console.log(data);
     const id = uuid();
 
     await database.query(SQL.createItemSolicitado, [

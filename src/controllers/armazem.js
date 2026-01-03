@@ -175,6 +175,35 @@ class ArmazemController {
     return ResponseController(res, HttpStatus.OK, T_PT.capturados, rows);
   }
 
+  static async getItensListEntidade(req, res) {
+    const { idUnidade } = req.params;
+    const { rows } = await database.query(SQL.getAllDisponiveisForList, [
+      idUnidade,
+    ]);
+
+    const agrupados = Object.values(
+      rows.reduce((acc, item) => {
+        const chave = `${item.id_tipo_estoque}-${item.nome}`;
+
+        if (!acc[chave]) {
+          acc[chave] = {
+            nome: item.nome,
+            id_tipo_estoque: item.id_tipo_estoque,
+            und_medida: item.und_medida,
+            qnt_disponivel: 0,
+            id: item.id,
+          };
+        }
+
+        acc[chave].qnt_disponivel += Number(item.qnt_disponivel);
+
+        return acc;
+      }, {})
+    );
+
+    return ResponseController(res, HttpStatus.OK, T_PT.capturados, agrupados);
+  }
+
   static async getEstoque(req, res) {
     const { idEstoque } = req.params;
     const { rows } = await database.query(SQL.getAllEstoqueRemessa, [

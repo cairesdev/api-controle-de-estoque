@@ -40,6 +40,10 @@ router.get("/armazem/estoque/:idEntidade", (req, res, next) =>
   InterceptError(controller.getEstoquesEntidade, req, res, next)
 );
 
+router.get("/armazem/estoque/lista/:idUnidade", (req, res, next) =>
+  InterceptError(controller.getItensListEntidade, req, res, next)
+);
+
 router.get("/armazem/estoque/remessa/:idEstoque", (req, res, next) =>
   InterceptError(controller.getEstoque, req, res, next)
 );
