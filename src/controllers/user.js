@@ -37,6 +37,7 @@ class UserController {
         data.ORGAO,
         data.LOGIN,
         hashPassword,
+        data.TIPO_ALMOXARIFE,
       ]);
 
       return ResponseController(res, httpStatus.CREATED, T_PT.cadastrado, id);
@@ -103,6 +104,7 @@ class UserController {
         entidade_id: dados_usuario[0].id_orgao,
         unidade_id: dados_usuario[0].id_unidade,
         unidade_nome: dados_usuario[0].unidade,
+        tipo_almoxarife: dados_usuario[0].tipo_almoxarifado,
       };
 
       return ResponseController(res, httpStatus.OK, T_PT.autorizado, user);
