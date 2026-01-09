@@ -10,6 +10,8 @@ module.exports = {
 
   update_modulos_liberados: `UPDATE modulos_liberados SET escolar=$1,saude=$2,assistencia_social=$3,outros=$4 where id_orgao = $5;`,
 
+  getModulosLiberados: `SELECT escolar, saude, combustivel from modulos_liberados where id_orgao = $1;`,
+
   verificacao_nome: `SELECT id FROM ORGAO WHERE NOME = $1;`,
   verifica_modulo: `SELECT id FROM modulos_liberados WHERE id_orgao = $1;`,
 

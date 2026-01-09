@@ -25,6 +25,10 @@ router.get("/entidade/:idEntidade", (req, res, next) =>
   InterceptError(controller.listaEntidade, req, res, next)
 );
 
+router.get("/entidade/:idEntidade/modulos", (req, res, next) =>
+  InterceptError(controller.getModulos, req, res, next)
+);
+
 router.post(
   "/entidade",
   (req, res, next) => o.validate(req, res, next),
