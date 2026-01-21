@@ -26,6 +26,12 @@ class ExtrasController {
     ]);
     return ResponseController(res, httpStatus.CREATED, T_PT.cadastrado, id);
   }
+
+  static async getAllViagens(req, res) {
+    const { idEntidade } = req.params;
+    const { rows } = await database.query(SQL.getAllViagens, [idEntidade]);
+    return ResponseController(res, httpStatus.CREATED, T_PT.capturado, rows);
+  }
 }
 
 module.exports = ExtrasController;
