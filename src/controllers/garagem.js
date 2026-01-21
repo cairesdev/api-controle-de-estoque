@@ -18,7 +18,7 @@ class ExtrasController {
       id,
       data.NOME,
       data.MARCA,
-      data.MODEDO,
+      data.MODELO,
       data.PLACA,
       1,
       idEntidade,

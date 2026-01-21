@@ -5,6 +5,6 @@ module.exports = {
   WHERE ORGAO = $1 ORDER BY NOME ASC;`,
 
   createVeiculo: `
-  INSERT INTO VEICULO (ID, NOME, MARCA, MODELO, PLACA, STATUS, ORGAO) VALUES ($1, $2, $3, $4, $5, $6, $7);
+  INSERT INTO VEICULOS (ID, NOME, MARCA, MODELO, PLACA, STATUS, ORGAO) VALUES ($1, $2, $3, $4, $5, $6, $7);
   `,
 };
