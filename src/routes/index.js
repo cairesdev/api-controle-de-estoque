@@ -6,7 +6,9 @@ const unidade = require("./unidade");
 const armazem = require("./armazem");
 const solicitacao = require("./solicitacao");
 const extras = require("./extra");
+const garagem = require("./garagem");
 
+router.use("/v1", garagem);
 router.use("/v1", extras);
 router.use("/v1", user);
 router.use("/v1", orgao);
