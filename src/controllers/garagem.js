@@ -22,6 +22,7 @@ class ExtrasController {
       data.PLACA,
       1,
       idEntidade,
+      data.COR,
     ]);
     return ResponseController(res, httpStatus.CREATED, T_PT.cadastrado, id);
   }
