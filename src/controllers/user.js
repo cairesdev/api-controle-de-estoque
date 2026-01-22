@@ -22,9 +22,17 @@ class UserController {
           res,
           httpStatus.CONFLICT,
           T_PT.cft_usuario,
-          null
+          null,
         );
       }
+
+      const { rows } = await database.query(SQL.tipo_almoxarifado, [
+        data.UNIDADE,
+      ]);
+      const tipoAlmoxarifado =
+        data.TIPO_ALMOXARIFE == null
+          ? rows[0].id_tipo_unidade
+          : data.TIPO_ALMOXARIFE;
 
       const hashPassword = await bcrypt.hash(data.SENHA, 14);
 
@@ -37,7 +45,7 @@ class UserController {
         data.ORGAO,
         data.LOGIN,
         hashPassword,
-        data.TIPO_ALMOXARIFE,
+        tipoAlmoxarifado,
       ]);
 
       return ResponseController(res, httpStatus.CREATED, T_PT.cadastrado, id);
@@ -47,7 +55,7 @@ class UserController {
         res,
         httpStatus.INTERNAL_SERVER_ERROR,
         T_PT.no_content,
-        null
+        null,
       );
     }
   }
@@ -65,7 +73,7 @@ class UserController {
           res,
           httpStatus.UNAUTHORIZED,
           T_PT.cft_credenciais,
-          null
+          null,
         );
       }
 
@@ -76,7 +84,7 @@ class UserController {
           res,
           httpStatus.UNAUTHORIZED,
           T_PT.cft_credenciais,
-          null
+          null,
         );
       }
 
@@ -90,7 +98,7 @@ class UserController {
           nome: dados_usuario[0].nome,
         },
         JWT_SECRET,
-        { expiresIn: "3h" }
+        { expiresIn: "3h" },
       );
 
       const user = {
@@ -114,7 +122,7 @@ class UserController {
         res,
         httpStatus.INTERNAL_SERVER_ERROR,
         T_PT.no_content,
-        null
+        null,
       );
     }
   }

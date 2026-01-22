@@ -7,7 +7,7 @@ class ExtrasController {
   static async getAllVeiculos(req, res) {
     const { idEntidade } = req.params;
     const { rows } = await database.query(SQL.getAll, [idEntidade]);
-    return ResponseController(res, httpStatus.CREATED, T_PT.capturado, rows);
+    return ResponseController(res, httpStatus.OK, T_PT.capturado, rows);
   }
 
   static async createVeiculo(req, res) {
@@ -30,12 +30,31 @@ class ExtrasController {
   static async getAllViagens(req, res) {
     const { idEntidade } = req.params;
     const { rows } = await database.query(SQL.getAllViagens, [idEntidade]);
-    return ResponseController(res, httpStatus.CREATED, T_PT.capturado, rows);
+    return ResponseController(res, httpStatus.OK, T_PT.capturado, rows);
   }
+
   static async getAllSolicitacoes(req, res) {
     const { idEntidade } = req.params;
     const { rows } = await database.query(SQL.getAllSolicitacoes, [idEntidade]);
-    return ResponseController(res, httpStatus.CREATED, T_PT.capturado, rows);
+    return ResponseController(res, httpStatus.OK, T_PT.capturado, rows);
+  }
+
+  static async createSolicitacao(req, res) {
+    const { idEntidade, idUnidade } = req.params;
+    const data = req.body;
+    const id = uuid();
+
+    await database.query(SQL.createSolicitacao, [
+      id,
+      data.ID_VEICULO,
+      data.DATA_VIAGEM,
+      data.RESPONSAVEL,
+      data.MOTIVO,
+      idUnidade,
+      idEntidade,
+      "7c92f4cf-f76b-4333-ac06-6b60bf2b2518",
+    ]);
+    return ResponseController(res, httpStatus.CREATED, T_PT.cadastrado, id);
   }
 }
 

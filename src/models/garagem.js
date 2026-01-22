@@ -25,4 +25,8 @@ module.exports = {
   where sv.id_orgao = $1
   order by sv.data_viagem asc;
   `,
+
+  createSolicitacao: `
+  INSERT INTO SOLICIACAO_VEICULAR (id, id_veiculo, data_viagem, responsavel, motivo, id_unidade, id_orgao, id_status) values ($1,$2,$3,$4,$5,$6,$7,$8);
+  `,
 };

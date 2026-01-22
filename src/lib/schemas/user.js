@@ -8,7 +8,7 @@ const create = yup.object().shape({
   LOGIN: yup.string().max(80, "Nome de usuario muito longo.").required(),
   SENHA: yup.string().max(30, "Senha muito longa.").required(),
   NIVEL: yup.number().required(),
-  TIPO_ALMOXARIFE: yup.number().required(),
+  TIPO_ALMOXARIFE: yup.number().required().nullable(),
 });
 
 module.exports = {
