@@ -33,6 +33,20 @@ class ExtrasController {
     return ResponseController(res, httpStatus.OK, T_PT.capturado, rows);
   }
 
+  static async getAllViagensUnidade(req, res) {
+    const { idUnidade } = req.params;
+    const { rows } = await database.query(SQL.getAllViagensUnidade, [
+      idUnidade,
+    ]);
+    return ResponseController(res, httpStatus.OK, T_PT.capturado, rows);
+  }
+
+  static async getViagemDetalhe(req, res) {
+    const { idViagem } = req.params;
+    const { rows } = await database.query(SQL.getViagemDetalhe, [idViagem]);
+    return ResponseController(res, httpStatus.OK, T_PT.capturado, rows[0]);
+  }
+
   static async getAllSolicitacoes(req, res) {
     const { idEntidade } = req.params;
     const { rows } = await database.query(SQL.getAllSolicitacoes, [idEntidade]);
