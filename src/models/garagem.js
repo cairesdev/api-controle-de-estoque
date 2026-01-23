@@ -27,6 +27,6 @@ module.exports = {
   `,
 
   createSolicitacao: `
-  INSERT INTO SOLICIACAO_VEICULAR (id, id_veiculo, data_viagem, responsavel, motivo, id_unidade, id_orgao, id_status) values ($1,$2,$3,$4,$5,$6,$7,$8);
+  INSERT INTO SOLICITACAO_VEICULAR (id, id_veiculo, data_viagem, responsavel, motivo, id_unidade, id_orgao, id_status) values ($1,$2,$3,$4,$5,$6,$7,$8);
   `,
 };

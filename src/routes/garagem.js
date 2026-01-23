@@ -7,6 +7,12 @@ router.get("/garagem/viajens/:idEntidade", (req, res, next) =>
   InterceptError(controller.getAllViagens, req, res, next),
 );
 
+router.post(
+  "/garagem/viajens/solicitacao/:idEntidade/:idUnidade",
+  (req, res, next) =>
+    InterceptError(controller.createSolicitacao, req, res, next),
+);
+
 router.get("/garagem/viajens/solicitacoes/:idEntidade", (req, res, next) =>
   InterceptError(controller.getAllSolicitacoes, req, res, next),
 );
