@@ -14,7 +14,7 @@ module.exports = {
   join veiculos v on uv.id_veiculo = v.id
   join unidade u on uv.unidade = u.id
   where v.orgao = $1
-  order by uv.saida, uv.chegada asc;
+  order by uv.chegada desc;
   `,
 
   getAllViagensUnidade: `
@@ -47,4 +47,6 @@ module.exports = {
   createSolicitacao: `
   INSERT INTO SOLICITACAO_VEICULAR (id, id_veiculo, data_viagem, responsavel, motivo, id_unidade, id_orgao, id_status) values ($1,$2,$3,$4,$5,$6,$7,$8);
   `,
+
+  concluirViagem: `UPDATE UTILIZACAO_VEICULAR SET CHEGADA = $1, KM_FINAL = $2 WHERE ID = $3;`,
 };

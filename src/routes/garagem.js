@@ -15,6 +15,10 @@ router.get("/garagem/viajens/:idViagem/detalhes", (req, res, next) =>
   InterceptError(controller.getViagemDetalhe, req, res, next),
 );
 
+router.put("/garagem/viajens/:idViagem/concluir", (req, res, next) =>
+  InterceptError(controller.concluirViagem, req, res, next),
+);
+
 router.post(
   "/garagem/viajens/solicitacao/:idEntidade/:idUnidade",
   (req, res, next) =>

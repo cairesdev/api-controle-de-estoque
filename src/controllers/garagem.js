@@ -53,6 +53,23 @@ class ExtrasController {
     return ResponseController(res, httpStatus.OK, T_PT.capturado, rows);
   }
 
+  static async concluirViagem(req, res) {
+    const { idViagem } = req.params;
+    const data = req.body;
+
+    function datetimeLocalToBrazil(dateTimeLocal) {
+      const date = new Date(dateTimeLocal);
+      return date.toISOString().slice(0, 19).replace("T", " ");
+    }
+
+    await database.query(SQL.concluirViagem, [
+      datetimeLocalToBrazil(data.DATA),
+      data.CHEGADA,
+      idViagem,
+    ]);
+    return ResponseController(res, httpStatus.OK, T_PT.capturado, null);
+  }
+
   static async createSolicitacao(req, res) {
     const { idEntidade, idUnidade } = req.params;
     const data = req.body;
