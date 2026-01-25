@@ -25,6 +25,16 @@ router.post(
     InterceptError(controller.createSolicitacao, req, res, next),
 );
 
+router.post(
+  "/garagem/viajens/liberacao/:idSolicitacao/:idUnidade",
+  (req, res, next) =>
+    InterceptError(controller.liberaSolicitacao, req, res, next),
+);
+
+router.put("/garagem/viajens/liberacao/:idViagem", (req, res, next) =>
+  InterceptError(controller.iniciaViagem, req, res, next),
+);
+
 router.get("/garagem/viajens/solicitacoes/:idEntidade", (req, res, next) =>
   InterceptError(controller.getAllSolicitacoes, req, res, next),
 );
@@ -35,6 +45,10 @@ router.get("/garagem/veiculos/:idEntidade", (req, res, next) =>
 
 router.post("/garagem/veiculos/:idEntidade", (req, res, next) =>
   InterceptError(controller.createVeiculo, req, res, next),
+);
+
+router.get("/garagem/viajens/solicitacao/:idSolicitacao", (req, res, next) =>
+  InterceptError(controller.getDetalheSolicitcao, req, res, next),
 );
 
 module.exports = router;
