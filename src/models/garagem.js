@@ -9,7 +9,7 @@ module.exports = {
   `,
 
   getAllViagens: `
-  SELECT uv.id, v.nome as veiculo, v.placa, u.nome as unidade, uv.saida, uv.chegada, uv.motivo, uv.motorista, uv.responsavel, uv.km_inicial, uv.km_final
+  SELECT uv.id, v.nome as veiculo, v.placa, u.nome as unidade, uv.saida, uv.chegada, uv.motivo, uv.motorista, uv.responsavel, uv.km_inicial, uv.km_final, uv.liberacao
   from utilizacao_veicular uv
   join veiculos v on uv.id_veiculo = v.id
   join unidade u on uv.unidade = u.id
@@ -27,7 +27,7 @@ module.exports = {
   `,
 
   getViagemDetalhe: `
-  SELECT uv.id, v.nome as veiculo, v.placa, u.nome as unidade, uv.saida, uv.chegada, uv.motivo, uv.motorista, uv.responsavel, uv.km_inicial, uv.km_final
+  SELECT uv.id, v.nome as veiculo, v.placa, u.nome as unidade, uv.saida, uv.chegada, uv.motivo, uv.motorista, uv.responsavel, uv.km_inicial, uv.km_final, uv.liberacao
   from utilizacao_veicular uv
   join veiculos v on uv.id_veiculo = v.id
   join unidade u on uv.unidade = u.id
