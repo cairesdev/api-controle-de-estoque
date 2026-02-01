@@ -10,48 +10,48 @@ const o = new validator(schema.orgao);
 const m = new validator(schema.modulos);
 
 router.get("/entidades", (req, res, next) =>
-  InterceptError(controller.listaEntidades, req, res, next)
+  InterceptError(controller.listaEntidades, req, res, next),
 );
 
 router.get("/entidade/estoque/disponivel/:idEntidade", (req, res, next) =>
-  InterceptError(controller.getEstoqueEntidade, req, res, next)
+  InterceptError(controller.getEstoqueEntidade, req, res, next),
 );
 
 router.get("/unidade/estoque/disponivel/:idUnidade", (req, res, next) =>
-  InterceptError(controller.getEstoqueUnidade, req, res, next)
+  InterceptError(controller.getEstoqueUnidade, req, res, next),
 );
 
 router.get("/entidade/:idEntidade", (req, res, next) =>
-  InterceptError(controller.listaEntidade, req, res, next)
+  InterceptError(controller.listaEntidade, req, res, next),
 );
 
 router.get("/entidade/:idEntidade/modulos", (req, res, next) =>
-  InterceptError(controller.getModulos, req, res, next)
+  InterceptError(controller.getModulos, req, res, next),
 );
 
 router.post(
   "/entidade",
   (req, res, next) => o.validate(req, res, next),
-  (req, res, next) => InterceptError(controller.create, req, res, next)
+  (req, res, next) => InterceptError(controller.create, req, res, next),
 );
 
 router.patch(
   "/entidade/:idEntidade",
   (req, res, next) => o.validate(req, res, next),
-  (req, res, next) => InterceptError(controller.updateEntidade, req, res, next)
+  (req, res, next) => InterceptError(controller.updateEntidade, req, res, next),
 );
 
 router.post(
   "/modulos/:idEntidade",
   (req, res, next) => m.validate(req, res, next),
   (req, res, next) =>
-    InterceptError(controller.cadastrarModulos, req, res, next)
+    InterceptError(controller.cadastrarModulos, req, res, next),
 );
 
 router.patch(
   "/modulos/:idEntidade",
   (req, res, next) => m.validate(req, res, next),
-  (req, res, next) => InterceptError(controller.updateModulos, req, res, next)
+  (req, res, next) => InterceptError(controller.updateModulos, req, res, next),
 );
 
 module.exports = router;
