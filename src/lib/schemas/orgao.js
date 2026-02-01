@@ -13,7 +13,7 @@ const modulos = yup.object().shape({
   ESCOLAR: yup.number(),
   SAUDE: yup.number(),
   ASSISTENCIA_SOCIAL: yup.number(),
-  OUTROS: yup.number(),
+  COMBUSTIVEL: yup.number(),
 });
 
 module.exports = {

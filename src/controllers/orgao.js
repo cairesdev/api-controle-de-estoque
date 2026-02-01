@@ -17,7 +17,7 @@ class OrgaoController {
         res,
         httpStatus.CONFLICT,
         T_PT.cft_nome,
-        rows[0].id
+        rows[0].id,
       );
     }
 
@@ -48,7 +48,7 @@ class OrgaoController {
         res,
         httpStatus.CONFLICT,
         T_PT.cft_modulos,
-        rows[0].id
+        rows[0].id,
       );
     }
 
@@ -58,7 +58,7 @@ class OrgaoController {
       data.ESCOLAR,
       data.SAUDE,
       data.ASSISTENCIA_SOCIAL,
-      data.OUTROS,
+      data.COMBUSTIVEL,
     ]);
 
     return ResponseController(res, httpStatus.CREATED, T_PT.cadastrado, id);
@@ -79,7 +79,7 @@ class OrgaoController {
         res,
         httpStatus.NOT_FOUND,
         T_PT.not_found,
-        null
+        null,
       );
     }
     return ResponseController(res, httpStatus.OK, T_PT.capturado, rows[0]);
@@ -111,7 +111,7 @@ class OrgaoController {
       data.ESCOLAR,
       data.SAUDE,
       data.ASSISTENCIA_SOCIAL,
-      data.OUTROS,
+      data.COMBUSTIVEL,
       idEntidade,
     ]);
 

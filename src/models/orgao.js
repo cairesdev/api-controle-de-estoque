@@ -5,10 +5,10 @@ module.exports = {
   update: `UPDATE orgao
 	SET nome=$1, endereco=$2, bairro=$3, cidade=$4, email=$5, telefone=$6, status=$7 WHERE id=$8;`,
 
-  modulos_liberados: `INSERT INTO modulos_liberados (id,id_orgao,escolar,saude,assistencia_social,outros) 
+  modulos_liberados: `INSERT INTO modulos_liberados (id,id_orgao,escolar,saude,assistencia_social,combustivel) 
   values ($1,$2,$3,$4,$5,$6);`,
 
-  update_modulos_liberados: `UPDATE modulos_liberados SET escolar=$1,saude=$2,assistencia_social=$3,outros=$4 where id_orgao = $5;`,
+  update_modulos_liberados: `UPDATE modulos_liberados SET escolar=$1,saude=$2,assistencia_social=$3,combustivel=$4 where id_orgao = $5;`,
 
   getModulosLiberados: `SELECT escolar, saude, combustivel from modulos_liberados where id_orgao = $1;`,
 
