@@ -20,7 +20,7 @@ app.use((req, res, next) => {
 app.use(
   helmet({
     contentSecurityPolicy: false,
-  })
+  }),
 );
 
 app.use(compression());
@@ -29,7 +29,7 @@ app.use(
   cors({
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
-  })
+  }),
 );
 
 if (process.env.NODE_ENV === "development") {
@@ -43,10 +43,10 @@ app.use(
   express.static(path.join(__dirname, "public"), {
     maxAge: "1d",
     etag: false,
-  })
+  }),
 );
 
-app.get("/", (req, res) => res.status(200).send("1.0"));
+app.get("/", (req, res) => res.status(200).send("1.2"));
 
 app.use(routes);
 

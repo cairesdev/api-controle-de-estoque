@@ -33,7 +33,6 @@ class SolicitacaoController {
     const { idSolicitacao } = req.params;
     const data = req.body;
 
-    console.log(data);
     const id = uuid();
 
     await database.query(SQL.createItemSolicitado, [
@@ -103,8 +102,10 @@ class SolicitacaoController {
         idSolicitacao,
       ]);
 
-      solicitacao[0].estoque = estoque[0].id;
-      solicitacao[0].codigo = estoque[0].codigo;
+      if (estoque.length !== 0) {
+        solicitacao[0].estoque = estoque[0].id;
+        solicitacao[0].codigo = estoque[0].codigo;
+      }
     }
 
     return ResponseController(res, httpStatus.OK, T_PT.capturados, {
