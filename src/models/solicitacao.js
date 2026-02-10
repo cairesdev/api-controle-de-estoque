@@ -33,6 +33,11 @@ module.exports = {
   WHERE S.id = $1;
   `,
 
+  getEstoque: `SELECT EU.CODIGO, EU.NOME, EU.DATA_ENTRADA, EU.QNT_ENTRADA, EU.QNT_DISPONIVEL, EU.LOCAL_ESTOCADO, EU.ID
+  FROM ESTOQUE_UNIDADE EU
+  WHERE EU.ID_SOLICITACAO = $1 LIMIT 1;
+  `,
+
   getItensSolicitacao: `
   SELECT PS.ID, PS.QNT_SOLICITADA, P.NOME, P.UND_MEDIDA, PS.ID_PRODUTO from produto_solicitado PS 
   JOIN PRODUTO P ON PS.ID_PRODUTO = P.ID
@@ -40,6 +45,8 @@ module.exports = {
   `,
 
   setAsPendente: `update solicitacao set id_status = '7c92f4cf-f76b-4333-ac06-6b60bf2b2518' where id = $1 and id_status = 'e1d9ab68-ec2d-47b0-99aa-28bb2f6578f7';`,
+
+  setAsConcluida: `update solicitacao set id_status = 'd7e3227d-854b-41e5-a4db-94cadf994d78' where id = $1 and id_status = 'd915a72e-09ae-49af-926d-a0c399fd1aba';`,
 
   getProdutosDisponiveis: `
   SELECT PE.QNT_DISPONIVEL, PE.ID, PE.data_validade, PE.ID_ESTOQUE_ORIGEM, AO.NOME, AO.CODIGO 

@@ -58,6 +58,12 @@ class SolicitacaoController {
     return ResponseController(res, httpStatus.OK, T_PT.capturados, rows);
   }
 
+  static async concluirSolicitacao(req, res) {
+    const { idSolicitacao } = req.params;
+    await database.query(SQL.setAsConcluida, [idSolicitacao]);
+    return ResponseController(res, httpStatus.OK, T_PT.atualizado, null);
+  }
+
   static async getSolicitacao(req, res) {
     const { idSolicitacao, idUnidade } = req.params;
     const { visualizacao } = req.query;
@@ -68,7 +74,7 @@ class SolicitacaoController {
         res,
         httpStatus.NOT_ACEPTABLE,
         T_PT.not_found,
-        null
+        null,
       );
     }
 
@@ -84,12 +90,21 @@ class SolicitacaoController {
       for await (let item of itens) {
         const { rows: itensPresentes } = await database.query(
           SQL.getAllItensUnidade,
-          [idUnidade, item.id_produto]
+          [idUnidade, item.id_produto],
         );
         item.disponiveis = itensPresentes;
       }
 
       await database.query(SQL.setAsPendente, [idSolicitacao]);
+    }
+
+    if (visualizacao === "unidade") {
+      const { rows: estoque } = await database.query(SQL.getEstoque, [
+        idSolicitacao,
+      ]);
+
+      solicitacao[0].estoque = estoque[0].id;
+      solicitacao[0].codigo = estoque[0].codigo;
     }
 
     return ResponseController(res, httpStatus.OK, T_PT.capturados, {
@@ -103,7 +118,7 @@ class SolicitacaoController {
 
     const { rows: itensSolicitacao } = await database.query(
       SQL.getItensSolicitacao,
-      [idSolicitacao]
+      [idSolicitacao],
     );
 
     const arrayOfEstoque = [];
@@ -121,7 +136,7 @@ class SolicitacaoController {
       res,
       httpStatus.OK,
       T_PT.capturados,
-      arrayOfEstoque
+      arrayOfEstoque,
     );
   }
 }

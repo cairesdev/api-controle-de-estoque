@@ -54,7 +54,7 @@ class ArmazemController {
           res,
           httpStatus.NO_CONTENT,
           T_PT.no_content,
-          null
+          null,
         );
       }
 
@@ -88,14 +88,14 @@ class ArmazemController {
         res,
         httpStatus.CREATED,
         T_PT.cadastrado,
-        json.length
+        json.length,
       );
     } catch (error) {
       return ResponseController(
         res,
         httpStatus.CREATED,
         T_PT.cadastrado,
-        error.message
+        error.message,
       );
     }
   }
@@ -118,7 +118,7 @@ class ArmazemController {
           res,
           httpStatus.UNAUTHORIZED,
           T_PT.nao_autorizado,
-          null
+          null,
         );
       }
     } else {
@@ -126,7 +126,7 @@ class ArmazemController {
         res,
         httpStatus.UNAUTHORIZED,
         T_PT.nao_autorizado,
-        null
+        null,
       );
     }
 
@@ -198,7 +198,7 @@ class ArmazemController {
         acc[chave].qnt_disponivel += Number(item.qnt_disponivel);
 
         return acc;
-      }, {})
+      }, {}),
     );
 
     return ResponseController(res, HttpStatus.OK, T_PT.capturados, agrupados);
