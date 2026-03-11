@@ -46,7 +46,7 @@ app.use(
   }),
 );
 
-app.get("/", (req, res) => res.status(200).send("1.2"));
+app.get("/", (req, res) => res.status(200).send("1.3"));
 
 app.use(routes);
 

@@ -109,4 +109,9 @@ module.exports = {
   `,
 
   createMovimentoEstoque: `INSERT INTO MOVIMENTACAO_ESTOQUE (ID,ID_PRODUTO_ESTOCADO,DATA_MOVIMENTACAO,QNT_MOVIMENTADA,ID_TIPO_MOVIMENTACAO) VALUES ($1,$2,$3,$4,'f28031fd-af25-49cd-a430-47680f3aaa2b');`,
+
+  deleteAllArmazem: `UPDATE armazem_orgao SET excluido = 1 WHERE id_orgao = $1;`,
+  deleteAllArmazem_unidade: `UPDATE estoque_unidade SET excluido = 1 WHERE id_unidade = $1;`,
+  deleteAllSolicitacoes: `delete from solicitacao where id_orgao = $1;`,
+  deleteAllSolicitacoes_unidade: `delete from solicitacao where id_unidade = $1;`,
 };

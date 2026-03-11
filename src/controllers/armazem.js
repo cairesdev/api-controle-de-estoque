@@ -377,6 +377,33 @@ class ArmazemController {
     const { rows } = await database.query(SQL.getAllProducts, []);
     return ResponseController(res, HttpStatus.OK, T_PT.capturados, rows);
   }
+
+  static async deleteAllArmazem(req, res) {
+    const { idEntidade } = req.params;
+    const { rows } = await database.query(SQL.deleteAllArmazem, [idEntidade]);
+    return ResponseController(res, HttpStatus.OK, T_PT.apagado, rows);
+  }
+  static async deleteAllArmazemUnidade(req, res) {
+    const { idUnidade } = req.params;
+    const { rows } = await database.query(SQL.deleteAllArmazem_unidade, [
+      idUnidade,
+    ]);
+    return ResponseController(res, HttpStatus.OK, T_PT.apagado, rows);
+  }
+  static async deleteAllSolicitacao(req, res) {
+    const { idEntidade } = req.params;
+    const { rows } = await database.query(SQL.deleteAllSolicitacoes, [
+      idEntidade,
+    ]);
+    return ResponseController(res, HttpStatus.OK, T_PT.apagado, rows);
+  }
+  static async deleteAllSolicitacaoUnidade(req, res) {
+    const { idUnidade } = req.params;
+    const { rows } = await database.query(SQL.deleteAllSolicitacoes_unidade, [
+      idUnidade,
+    ]);
+    return ResponseController(res, HttpStatus.OK, T_PT.apagado, rows);
+  }
 }
 
 module.exports = ArmazemController;
