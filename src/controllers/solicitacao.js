@@ -53,7 +53,10 @@ class SolicitacaoController {
 
   static async getSolicitacoesLiberadas(req, res) {
     const { idUnidade } = req.params;
-    const { rows } = await database.query(SQL.getSolicitacoes, [idUnidade]);
+    console.log("ss");
+    const { rows } = await database.query(SQL.getSolicitacoesLiberadas, [
+      idUnidade,
+    ]);
     return ResponseController(res, httpStatus.OK, T_PT.capturados, rows);
   }
 

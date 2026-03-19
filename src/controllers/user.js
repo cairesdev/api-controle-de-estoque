@@ -145,6 +145,18 @@ class UserController {
     await database.query(SQL.updatePass, [hashPassword, user]);
     return ResponseController(res, httpStatus.OK, T_PT.atualizado, null);
   }
+
+  static async updateBasics(req, res) {
+    const { user } = req.params;
+    const data = req.body;
+    await database.query(SQL.updatebasics, [
+      data.NOME,
+      data.DESCRICAO,
+      data.NIVEL,
+      user,
+    ]);
+    return ResponseController(res, httpStatus.OK, T_PT.atualizado, null);
+  }
 }
 
 module.exports = UserController;

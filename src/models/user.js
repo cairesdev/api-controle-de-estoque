@@ -10,4 +10,6 @@ module.exports = {
   deleteUsuario: `DELETE FROM USUARIO WHERE ID = $1;`,
   updatePass: `UPDATE USUARIO SET SENHA = $1 WHERE LOGIN = $2;`,
   tipo_almoxarifado: `SELECT ID_TIPO_UNIDADE FROM UNIDADE WHERE ID = $1;`,
+
+  updatebasics: `UPDATE USUARIO SET NOME = $1, DESCRICAO = $2, NIVEL = $3 WHERE ID = $4;`,
 };
