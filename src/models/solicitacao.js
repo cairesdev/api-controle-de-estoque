@@ -1,6 +1,9 @@
 module.exports = {
   createSolicitacao: `INSERT INTO solicitacao (id, id_unidade, id_orgao, id_status, data_solicitacao, id_solicitante, nome,id_tipo_estoque) VALUES ($1,$2,(select id_orgao from unidade where id = $3),$4,$5,$6,$7,$8);`,
 
+  deleteSolicitacao: `DELETE FROM SOLICITACAO WHERE ID = $1;`,
+  deleteProdutoSolicitado: `DELETE FROM produto_solicitado WHERE ID_SOLICITACAO = $1;`,
+
   createItemSolicitado: `INSERT INTO produto_solicitado (id, id_solicitacao, id_produto, qnt_solicitada)
 	VALUES ($1, $2, $3, $4);`,
 

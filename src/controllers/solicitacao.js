@@ -29,6 +29,13 @@ class SolicitacaoController {
     return ResponseController(res, httpStatus.CREATED, T_PT.cadastrado, id);
   }
 
+  static async deleteSolicitacao(req, res) {
+    const { idSolicitacao } = req.params;
+    await database.query(SQL.deleteSolicitacao, [idSolicitacao]);
+    await database.query(SQL.deleteProdutoSolicitado, [idSolicitacao]);
+    return ResponseController(res, httpStatus.OK, T_PT.apagado, null);
+  }
+
   static async itemSolicitado(req, res) {
     const { idSolicitacao } = req.params;
     const data = req.body;

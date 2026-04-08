@@ -11,6 +11,12 @@ router.put("/solicitacao/status/concluir/:idSolicitacao", (req, res, next) =>
   InterceptError(controller.concluirSolicitacao, req, res, next),
 );
 
+router.delete(
+  "/solicitacao/solicitacao/danger-zone/:idSolicitacao",
+  (req, res, next) =>
+    InterceptError(controller.deleteSolicitacao, req, res, next),
+);
+
 router.post("/solicitacao/:idUnidade", (req, res, next) =>
   InterceptError(controller.createSolicitacao, req, res, next),
 );
