@@ -33,8 +33,8 @@ app.use(
 );
 
 if (process.env.NODE_ENV === "development") {
-  app.use(morgan("dev"));
 }
+app.use(morgan("dev"));
 
 app.use(bodyParser.json({ limit: "100mb" }));
 app.use(bodyParser.urlencoded({ extended: true, limit: "100mb" }));
