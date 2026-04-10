@@ -42,21 +42,25 @@ class SolicitacaoController {
 
     const id = uuid();
 
-    const {
-      rows: [produto],
-    } = await database.query(SQL.getDisponiveisVerify, [
+    const { rows: produtos } = await database.query(SQL.getDisponiveisVerify, [
       data.UNIDADE,
       data.PRODUTO,
     ]);
 
-    if (produto.qnt_disponivel < data.QNT_SOLICITADA) {
-      return ResponseController(
-        res,
-        httpStatus.CONFLICT,
-        T_PT.qnt_indisp +
-          `, quantidade no armazem: ${produto.qnt_disponivel}${produto.und_medida}`,
-        null,
-      );
+    if (produtos.length > 0) {
+      var totalDisponivel = 0;
+      for (let produto of produtos) {
+        totalDisponivel += produto.qnt_disponivel;
+      }
+      if (totalDisponivel < data.QNT_SOLICITADA) {
+        return ResponseController(
+          res,
+          httpStatus.CONFLICT,
+          T_PT.qnt_indisp +
+            `, quantidade no armazem: ${totalDisponivel}${produtos[0].und_medida}`,
+          null,
+        );
+      }
     }
 
     await database.query(SQL.createItemSolicitado, [
@@ -140,7 +144,6 @@ class SolicitacaoController {
       itens,
     });
   }
-
   static async getSolicitacaoeComparaEstoque(req, res) {
     const { idSolicitacao, idEntidade } = req.params;
 
@@ -149,6 +152,8 @@ class SolicitacaoController {
       [idSolicitacao],
     );
 
+    const reservadoPorEstoque = {};
+
     const arrayOfEstoque = [];
     for await (let item of itensSolicitacao) {
       let { rows } = await database.query(SQL.getProdutosDisponiveis, [
@@ -156,7 +161,28 @@ class SolicitacaoController {
         idEntidade,
       ]);
 
-      item.disponiveis = rows;
+      let restante = item.qnt_solicitada;
+
+      const disponiveis = [];
+      for (const estoque of rows) {
+        const jaReservado = reservadoPorEstoque[estoque.id] ?? 0;
+        const disponivelReal = estoque.qnt_disponivel - jaReservado;
+
+        if (disponivelReal <= 0) continue;
+
+        const alocar = Math.min(restante, disponivelReal);
+        reservadoPorEstoque[estoque.id] = jaReservado + alocar;
+        restante -= alocar;
+
+        disponiveis.push({
+          ...estoque,
+          qnt_disponivel: disponivelReal,
+        });
+
+        if (restante <= 0) break;
+      }
+
+      item.disponiveis = disponiveis;
       arrayOfEstoque.push(item);
     }
 
