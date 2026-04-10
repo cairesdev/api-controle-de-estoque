@@ -42,6 +42,23 @@ class SolicitacaoController {
 
     const id = uuid();
 
+    const {
+      rows: [produto],
+    } = await database.query(SQL.getDisponiveisVerify, [
+      data.UNIDADE,
+      data.PRODUTO,
+    ]);
+
+    if (produto.qnt_disponivel < data.QNT_SOLICITADA) {
+      return ResponseController(
+        res,
+        httpStatus.CONFLICT,
+        T_PT.qnt_indisp +
+          `, quantidade no armazem: ${produto.qnt_disponivel}${produto.und_medida}`,
+        null,
+      );
+    }
+
     await database.query(SQL.createItemSolicitado, [
       id,
       idSolicitacao,

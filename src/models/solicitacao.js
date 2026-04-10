@@ -1,11 +1,20 @@
 module.exports = {
+  getDisponiveisVerify: `
+  SELECT P.ID, PE.QNT_DISPONIVEL, P.UND_MEDIDA
+  FROM PRODUTO_ESTOCADO PE
+  INNER JOIN PRODUTO P ON PE.ID_PRODUTO = P.ID
+  INNER JOIN ARMAZEM_ORGAO AO ON PE.ID_ESTOQUE_ORIGEM = AO.ID
+  WHERE AO.ID_ORGAO = (select id_orgao from unidade where id = $1) AND PE.EXCLUIDO = 0 AND PE.QNT_DISPONIVEL <> 0 AND P.ID = $2
+  ORDER BY PE.DATA_VALIDADE DESC;
+  `,
+
+  createItemSolicitado: `INSERT INTO produto_solicitado (id, id_solicitacao, id_produto, qnt_solicitada)
+    VALUES ($1, $2, $3, $4);`,
+
   createSolicitacao: `INSERT INTO solicitacao (id, id_unidade, id_orgao, id_status, data_solicitacao, id_solicitante, nome,id_tipo_estoque) VALUES ($1,$2,(select id_orgao from unidade where id = $3),$4,$5,$6,$7,$8);`,
 
   deleteSolicitacao: `DELETE FROM SOLICITACAO WHERE ID = $1;`,
   deleteProdutoSolicitado: `DELETE FROM produto_solicitado WHERE ID_SOLICITACAO = $1;`,
-
-  createItemSolicitado: `INSERT INTO produto_solicitado (id, id_solicitacao, id_produto, qnt_solicitada)
-	VALUES ($1, $2, $3, $4);`,
 
   getSolicitacoes: `
   SELECT S.ID, S.NOME, S.DATA_SOLICITACAO, U.NOME as "solicitante", ST.NOME as "status", UND.NOME as "unidade", UND.id as "id_unidade",TE.nome as "tipo_solicitacao"

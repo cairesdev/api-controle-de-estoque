@@ -60,7 +60,7 @@ module.exports = {
   FROM PRODUTO_ESTOCADO PE
   INNER JOIN PRODUTO P ON PE.ID_PRODUTO = P.ID
   INNER JOIN ARMAZEM_ORGAO AO ON PE.ID_ESTOQUE_ORIGEM = AO.ID
-  WHERE AO.ID_ORGAO = (select id_orgao from unidade where id = $1) AND PE.EXCLUIDO = 0 ORDER BY PE.DATA_VALIDADE DESC;
+  WHERE AO.ID_ORGAO = (select id_orgao from unidade where id = $1) AND PE.EXCLUIDO = 0 AND PE.QNT_DISPONIVEL <> 0 ORDER BY PE.DATA_VALIDADE DESC;
   `,
 
   getAllEstoqueRemessa: `
