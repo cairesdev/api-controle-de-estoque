@@ -9,6 +9,7 @@ const HttpStatus = require("../lib/http-status");
 const SQL = require("../models/armazem");
 const { v4: uuid } = require("uuid");
 const xlsx = require("xlsx");
+const { redisClient: redis } = require("../client/redis");
 
 class ArmazemController {
   static async cadastroIndividual(req, res) {
@@ -174,32 +175,43 @@ class ArmazemController {
     const { rows } = await database.query(SQL.getAllEstoque, [idEntidade]);
     return ResponseController(res, HttpStatus.OK, T_PT.capturados, rows);
   }
-
   static async getItensListEntidade(req, res) {
     const { idUnidade } = req.params;
+
     const { rows } = await database.query(SQL.getAllDisponiveisForList, [
       idUnidade,
     ]);
 
-    const agrupados = Object.values(
-      rows.reduce((acc, item) => {
-        const chave = `${item.id_tipo_estoque}-${item.nome}`;
+    const agrupadosObj = rows.reduce((acc, item) => {
+      // ✅ Agrupa pelo UUID do produto
+      const chave = item.id;
 
-        if (!acc[chave]) {
-          acc[chave] = {
-            nome: item.nome,
-            id_tipo_estoque: item.id_tipo_estoque,
-            und_medida: item.und_medida,
-            qnt_disponivel: 0,
-            id: item.id,
-          };
-        }
+      if (!acc[chave]) {
+        acc[chave] = {
+          id: item.id, // ✅ UUID salvo no objeto
+          nome: item.nome,
+          id_tipo_estoque: item.id_tipo_estoque,
+          und_medida: item.und_medida,
+          qnt_disponivel: 0,
+        };
+      }
 
-        acc[chave].qnt_disponivel += Number(item.qnt_disponivel);
+      acc[chave].qnt_disponivel += Number(item.qnt_disponivel);
+      return acc;
+    }, {});
 
-        return acc;
-      }, {}),
-    );
+    const agrupados = Object.values(agrupadosObj);
+
+    // ✅ item.id existe agora, chave bate com a da reserva
+    const keys = agrupados.map((item) => `reservas:${idUnidade}:${item.id}`);
+
+    const valores = await redis.mget(keys);
+
+    agrupados.forEach((item, index) => {
+      const reservado = Number(valores[index]) || 0;
+      item.qnt_reservado = reservado;
+      item.qnt_disponivel = Math.max(0, item.qnt_disponivel - reservado);
+    });
 
     return ResponseController(res, HttpStatus.OK, T_PT.capturados, agrupados);
   }

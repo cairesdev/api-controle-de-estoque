@@ -2,6 +2,7 @@ const { T_PT, ResponseController, httpStatus } = require("../lib");
 const { database } = require("../client/database");
 const SQL = require("../models/solicitacao");
 const { v4: uuid } = require("uuid");
+const { redisClient: redis } = require("../client/redis");
 
 class SolicitacaoController {
   static async createSolicitacao(req, res) {
@@ -36,41 +37,65 @@ class SolicitacaoController {
     return ResponseController(res, httpStatus.OK, T_PT.apagado, null);
   }
 
+  // ✅ RESERVA - itemSolicitado
   static async itemSolicitado(req, res) {
     const { idSolicitacao } = req.params;
     const data = req.body;
 
-    const id = uuid();
+    const produtoId = String(data.PRODUTO).trim();
+    const unidadeId = String(data.UNIDADE).trim();
+    const chaveRedis = `reservas:${unidadeId}:${produtoId}`;
+    const TTL_48H = 60 * 60 * 48;
 
     const { rows: produtos } = await database.query(SQL.getDisponiveisVerify, [
       data.UNIDADE,
       data.PRODUTO,
     ]);
 
-    if (produtos.length > 0) {
-      var totalDisponivel = 0;
-      for (let produto of produtos) {
-        totalDisponivel += produto.qnt_disponivel;
-      }
-      if (totalDisponivel < data.QNT_SOLICITADA) {
-        return ResponseController(
-          res,
-          httpStatus.CONFLICT,
-          T_PT.qnt_indisp +
-            `, quantidade no armazem: ${totalDisponivel}${produtos[0].und_medida}`,
-          null,
-        );
-      }
+    if (produtos.length === 0) {
+      return ResponseController(res, 404, "Produto não encontrado", null);
     }
 
-    await database.query(SQL.createItemSolicitado, [
-      id,
-      idSolicitacao,
-      data.PRODUTO,
-      data.QNT_SOLICITADA,
-    ]);
+    const totalDisponivel = produtos.reduce(
+      (acc, p) => acc + Number(p.qnt_disponivel),
+      0,
+    );
 
-    return ResponseController(res, httpStatus.CREATED, T_PT.cadastrado, id);
+    const reservado = Number(await redis.get(chaveRedis)) || 0;
+    const disponivelReal = totalDisponivel - reservado;
+
+    if (disponivelReal < Number(data.QNT_SOLICITADA)) {
+      return ResponseController(
+        res,
+        httpStatus.CONFLICT,
+        `Indisponível. Restante: ${disponivelReal}${produtos[0].und_medida}`,
+        null,
+      );
+    }
+
+    await redis.incrby(chaveRedis, Number(data.QNT_SOLICITADA));
+
+    await redis.expire(chaveRedis, TTL_48H);
+
+    try {
+      const id = uuid();
+      await database.query(SQL.createItemSolicitado, [
+        id,
+        idSolicitacao,
+        data.PRODUTO,
+        data.QNT_SOLICITADA,
+      ]);
+
+      return ResponseController(
+        res,
+        httpStatus.CREATED,
+        "Reservado e registrado com sucesso",
+        null,
+      );
+    } catch (error) {
+      await redis.decrby(chaveRedis, Number(data.QNT_SOLICITADA));
+      throw error;
+    }
   }
 
   static async getSolicitacoes(req, res) {
@@ -81,7 +106,7 @@ class SolicitacaoController {
 
   static async getSolicitacoesLiberadas(req, res) {
     const { idUnidade } = req.params;
-    console.log("ss");
+
     const { rows } = await database.query(SQL.getSolicitacoesLiberadas, [
       idUnidade,
     ]);
