@@ -13,13 +13,22 @@ function randomizeNumber(minLength = 10, maxLength = 25) {
 
   for (let i = 0; i < length; i++) {
     randomNumberString += digits.charAt(
-      Math.floor(Math.random() * digits.length)
+      Math.floor(Math.random() * digits.length),
     );
   }
 
   return randomNumberString;
 }
 
+function dateISO() {
+  return (
+    new Date()
+      .toLocaleString("sv-SE", { timeZone: "America/Sao_Paulo" })
+      .replace(" ", "T") + "-03:00"
+  );
+}
+
 module.exports = {
   randomizeNumber,
+  dateISO,
 };

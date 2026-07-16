@@ -1,40 +1,34 @@
 const router = require("express").Router();
 const InterceptError = require("../middlewares/intercept-erros");
-
 const controller = require("../controllers/solicitacao");
 
-router.post("/solicitacao/itens/adicionar/:idSolicitacao", (req, res, next) =>
-  InterceptError(controller.itemSolicitado, req, res, next),
-);
-
-router.put("/solicitacao/status/concluir/:idSolicitacao", (req, res, next) =>
-  InterceptError(controller.concluirSolicitacao, req, res, next),
-);
-
-router.delete(
-  "/solicitacao/solicitacao/danger-zone/:idSolicitacao",
-  (req, res, next) =>
-    InterceptError(controller.deleteSolicitacao, req, res, next),
-);
-
-router.post("/solicitacao/:idUnidade", (req, res, next) =>
-  InterceptError(controller.createSolicitacao, req, res, next),
-);
-
 router.get("/solicitacoes/:idUnidade", (req, res, next) =>
-  InterceptError(controller.getSolicitacoes, req, res, next),
+  InterceptError(controller.getAll, req, res, next),
 );
 
 router.get("/solicitacoes/:idUnidade/liberadas", (req, res, next) =>
-  InterceptError(controller.getSolicitacoesLiberadas, req, res, next),
+  InterceptError(controller.getAllLiberadas, req, res, next),
 );
 
-router.get("/solicitacao/:idSolicitacao/unidade/:idUnidade", (req, res, next) =>
-  InterceptError(controller.getSolicitacao, req, res, next),
+router.post("/solicitacoes/:idUnidade", (req, res, next) =>
+  InterceptError(controller.create, req, res, next),
 );
 
-router.get("/solicitacao/:idSolicitacao/:idEntidade", (req, res, next) =>
-  InterceptError(controller.getSolicitacaoeComparaEstoque, req, res, next),
+router.get(
+  "/solicitacoes/:idSolicitacao/unidade/:idUnidade",
+  (req, res, next) => InterceptError(controller.getById, req, res, next),
+);
+
+router.post("/solicitacoes/:idSolicitacao/itens", (req, res, next) =>
+  InterceptError(controller.addItem, req, res, next),
+);
+
+router.put("/solicitacoes/:idSolicitacao/status/concluir", (req, res, next) =>
+  InterceptError(controller.concluir, req, res, next),
+);
+
+router.delete("/solicitacoes/:idSolicitacao", (req, res, next) =>
+  InterceptError(controller.softDelete, req, res, next),
 );
 
 module.exports = router;

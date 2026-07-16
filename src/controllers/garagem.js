@@ -3,17 +3,24 @@ const { T_PT, ResponseController, httpStatus } = require("../lib");
 const SQL = require("../models/garagem");
 const { v4: uuid } = require("uuid");
 
-class ExtrasController {
+const STATUS_PENDENTE = "7c92f4cf-f76b-4333-ac06-6b60bf2b2518";
+
+function datetimeLocalToBrazil(dateTimeLocal) {
+  return new Date(dateTimeLocal).toISOString().slice(0, 19).replace("T", " ");
+}
+
+class GaragemController {
   static async getAllVeiculos(req, res) {
-    const { idEntidade } = req.params;
-    const { rows } = await database.query(SQL.getAll, [idEntidade]);
-    return ResponseController(res, httpStatus.OK, T_PT.capturado, rows);
+    const { idOrgao } = req.params;
+    const { rows } = await database.query(SQL.getAllVeiculos, [idOrgao]);
+    return ResponseController(res, httpStatus.OK, T_PT.capturados, rows);
   }
 
   static async createVeiculo(req, res) {
-    const { idEntidade } = req.params;
+    const { idOrgao } = req.params;
     const data = req.body;
     const id = uuid();
+
     await database.query(SQL.createVeiculo, [
       id,
       data.NOME,
@@ -21,16 +28,17 @@ class ExtrasController {
       data.MODELO,
       data.PLACA,
       1,
-      idEntidade,
+      idOrgao,
       data.COR,
     ]);
+
     return ResponseController(res, httpStatus.CREATED, T_PT.cadastrado, id);
   }
 
-  static async getAllViagens(req, res) {
-    const { idEntidade } = req.params;
-    const { rows } = await database.query(SQL.getAllViagens, [idEntidade]);
-    return ResponseController(res, httpStatus.OK, T_PT.capturado, rows);
+  static async getAllViagensOrgao(req, res) {
+    const { idOrgao } = req.params;
+    const { rows } = await database.query(SQL.getAllViagensOrgao, [idOrgao]);
+    return ResponseController(res, httpStatus.OK, T_PT.capturados, rows);
   }
 
   static async getAllViagensUnidade(req, res) {
@@ -38,59 +46,39 @@ class ExtrasController {
     const { rows } = await database.query(SQL.getAllViagensUnidade, [
       idUnidade,
     ]);
-    return ResponseController(res, httpStatus.OK, T_PT.capturado, rows);
+    return ResponseController(res, httpStatus.OK, T_PT.capturados, rows);
   }
 
-  static async getViagemDetalhe(req, res) {
+  static async getViagemById(req, res) {
     const { idViagem } = req.params;
-    const { rows } = await database.query(SQL.getViagemDetalhe, [idViagem]);
+    const { rows } = await database.query(SQL.getViagemById, [idViagem]);
     return ResponseController(res, httpStatus.OK, T_PT.capturado, rows[0]);
   }
 
   static async getAllSolicitacoes(req, res) {
-    const { idEntidade } = req.params;
-    const { rows } = await database.query(SQL.getAllSolicitacoes, [idEntidade]);
+    const { idOrgao } = req.params;
+    const { rows } = await database.query(SQL.getAllSolicitacoes, [idOrgao]);
 
     return ResponseController(
       res,
       httpStatus.OK,
-      T_PT.capturado,
-      rows.sort((solicitacao) => {
-        if (solicitacao.status == "Pendente") return -1;
-        else return 1;
-      }),
+      T_PT.capturados,
+      rows.sort((a) => (a.status === "Pendente" ? -1 : 1)),
     );
   }
 
-  static async concluirViagem(req, res) {
-    const { idViagem } = req.params;
-    const data = req.body;
-
-    function datetimeLocalToBrazil(dateTimeLocal) {
-      const date = new Date(dateTimeLocal);
-      return date.toISOString().slice(0, 19).replace("T", " ");
-    }
-
-    await database.query(SQL.disponibilizaVeiculo, [idViagem]);
-    await database.query(SQL.concluiSolicitacao, [idViagem]);
-
-    await database.query(SQL.concluirViagem, [
-      datetimeLocalToBrazil(data.DATA),
-      data.CHEGADA,
-      idViagem,
+  static async getSolicitacaoById(req, res) {
+    const { idSolicitacao } = req.params;
+    const { rows } = await database.query(SQL.getSolicitacaoById, [
+      idSolicitacao,
     ]);
-    return ResponseController(res, httpStatus.OK, T_PT.atualizado, null);
+    return ResponseController(res, httpStatus.OK, T_PT.capturado, rows[0]);
   }
 
   static async createSolicitacao(req, res) {
-    const { idEntidade, idUnidade } = req.params;
+    const { idOrgao, idUnidade } = req.params;
     const data = req.body;
     const id = uuid();
-
-    function datetimeLocalToBrazil(dateTimeLocal) {
-      const date = new Date(dateTimeLocal);
-      return date.toISOString().slice(0, 19).replace("T", " ");
-    }
 
     await database.query(SQL.createSolicitacao, [
       id,
@@ -99,27 +87,22 @@ class ExtrasController {
       data.RESPONSAVEL,
       data.MOTIVO,
       idUnidade,
-      idEntidade,
-      "7c92f4cf-f76b-4333-ac06-6b60bf2b2518",
+      idOrgao,
+      STATUS_PENDENTE,
       data.TELEFONE_RESPONSAVEL,
       data.RESUMO,
     ]);
+
     return ResponseController(res, httpStatus.CREATED, T_PT.cadastrado, id);
   }
 
-  static async getDetalheSolicitcao(req, res) {
-    const { idSolicitacao } = req.params;
-    const { rows } = await database.query(SQL.getSolicitacao, [idSolicitacao]);
-    return ResponseController(res, httpStatus.OK, T_PT.capturado, rows[0]);
-  }
-
-  static async liberaSolicitacao(req, res) {
+  static async liberarSolicitacao(req, res) {
     const { idSolicitacao, idUnidade } = req.params;
     const data = req.body;
     const id = uuid();
 
     await database.query(SQL.liberarSolicitacao, [idSolicitacao]);
-    await database.query(SQL.indisponibilizaVeiculo, [data.ID_VEICULO]);
+    await database.query(SQL.indisponibilizarVeiculo, [data.ID_VEICULO]);
     await database.query(SQL.createViagem, [
       id,
       data.ID_VEICULO,
@@ -135,14 +118,9 @@ class ExtrasController {
     return ResponseController(res, httpStatus.CREATED, T_PT.cadastrado, id);
   }
 
-  static async iniciaViagem(req, res) {
+  static async iniciarViagem(req, res) {
     const { idViagem } = req.params;
     const data = req.body;
-
-    function datetimeLocalToBrazil(dateTimeLocal) {
-      const date = new Date(dateTimeLocal);
-      return date.toISOString().slice(0, 19).replace("T", " ");
-    }
 
     await database.query(SQL.iniciarViagem, [
       data.MOTORISTA,
@@ -151,13 +129,23 @@ class ExtrasController {
       idViagem,
     ]);
 
-    return ResponseController(
-      res,
-      httpStatus.CREATED,
-      T_PT.atualizado,
+    return ResponseController(res, httpStatus.OK, T_PT.atualizado, idViagem);
+  }
+
+  static async concluirViagem(req, res) {
+    const { idViagem } = req.params;
+    const data = req.body;
+
+    await database.query(SQL.disponibilizarVeiculo, [idViagem]);
+    await database.query(SQL.concluirSolicitacao, [idViagem]);
+    await database.query(SQL.concluirViagem, [
+      datetimeLocalToBrazil(data.DATA),
+      data.CHEGADA,
       idViagem,
-    );
+    ]);
+
+    return ResponseController(res, httpStatus.OK, T_PT.atualizado, null);
   }
 }
 
-module.exports = ExtrasController;
+module.exports = GaragemController;

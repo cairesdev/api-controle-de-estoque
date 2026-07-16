@@ -1,24 +1,33 @@
 const router = require("express").Router();
-const validator = require("../middlewares/validate-schema");
 const InterceptError = require("../middlewares/intercept-erros");
+const validator = require("../middlewares/validate-schema");
 const schema = require("../lib/schemas/user");
 const controller = require("../controllers/user");
-const m = new validator(schema.create);
+
+const validateCreate = new validator(schema.create);
+
+router.post("/usuarios/login", controller.login);
 
 router.post(
-  "/usuario/perfil",
-  (req, res, next) => m.validate(req, res, next),
+  "/usuarios",
+  (req, res, next) => validateCreate.validate(req, res, next),
   controller.create,
 );
 
-router.post("/usuario/login", controller.login);
-router.put("/usuario/login/danger/:user", controller.updatePassword);
-router.patch("/usuario/login/danger/:user", controller.updateBasics);
-router.patch("/usuarios/acesso-livre", (req, res, next) =>
-  InterceptError(controller.listAllUsers, req, res, next),
+router.get("/usuarios", (req, res, next) =>
+  InterceptError(controller.getAll, req, res, next),
 );
-router.delete("/usuarios/danger/:idUsuario", (req, res, next) =>
-  InterceptError(controller.deleteUsuario, req, res, next),
+
+router.delete("/usuarios/:idUsuario", (req, res, next) =>
+  InterceptError(controller.softDelete, req, res, next),
+);
+
+router.put("/usuarios/:idUsuario/senha", (req, res, next) =>
+  InterceptError(controller.updateSenha, req, res, next),
+);
+
+router.patch("/usuarios/:idUsuario", (req, res, next) =>
+  InterceptError(controller.updateBasicos, req, res, next),
 );
 
 module.exports = router;

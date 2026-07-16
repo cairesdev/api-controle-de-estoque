@@ -2,16 +2,16 @@ const { httpStatus, T_PT, ResponseController } = require("../lib");
 const { database } = require("../client/database");
 const SQL = require("../models/user");
 const { v4: uuid } = require("uuid");
-
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 
 const JWT_SECRET = process.env.JWT_SECRET || "123456";
 
-class UserController {
+class UsuarioController {
   static async create(req, res) {
     const data = req.body;
     const id = uuid();
+
     try {
       const { rowCount } = await database.query(SQL.verificacao_login, [
         data.LOGIN,
@@ -26,7 +26,7 @@ class UserController {
         );
       }
 
-      const { rows } = await database.query(SQL.tipo_almoxarifado, [
+      const { rows } = await database.query(SQL.getTipoAlmoxarifado, [
         data.UNIDADE,
       ]);
       const tipoAlmoxarifado =
@@ -54,7 +54,7 @@ class UserController {
       return ResponseController(
         res,
         httpStatus.INTERNAL_SERVER_ERROR,
-        T_PT.no_content,
+        T_PT.server_error,
         null,
       );
     }
@@ -77,9 +77,9 @@ class UserController {
         );
       }
 
-      const machPass = await bcrypt.compare(data.password, rows[0].senha);
+      const matchPass = await bcrypt.compare(data.password, rows[0].senha);
 
-      if (!machPass) {
+      if (!matchPass) {
         return ResponseController(
           res,
           httpStatus.UNAUTHORIZED,
@@ -88,75 +88,70 @@ class UserController {
         );
       }
 
-      const { rows: dados_usuario } = await database.query(SQL.dados_usuario, [
+      const { rows: dadosUsuario } = await database.query(SQL.dados_usuario, [
         rows[0].id,
       ]);
 
       const token = jwt.sign(
-        {
-          id: rows[0].id,
-          nome: dados_usuario[0].nome,
-        },
+        { id: rows[0].id, nome: dadosUsuario[0].nome },
         JWT_SECRET,
         { expiresIn: "3h" },
       );
 
-      const user = {
+      return ResponseController(res, httpStatus.OK, T_PT.autorizado, {
         access_token: token,
-        nome: dados_usuario[0].nome,
-        descricao: dados_usuario[0].descricao,
+        nome: dadosUsuario[0].nome,
+        descricao: dadosUsuario[0].descricao,
         login: data.username,
-        nivel: dados_usuario[0].nivel,
+        nivel: dadosUsuario[0].nivel,
         expires_on: new Date(Date.now() + 3 * 60 * 60 * 1000),
-        entidade_nome: dados_usuario[0].entidade,
-        entidade_id: dados_usuario[0].id_orgao,
-        unidade_id: dados_usuario[0].id_unidade,
-        unidade_nome: dados_usuario[0].unidade,
-        tipo_almoxarife: dados_usuario[0].tipo_almoxarifado,
-      };
-
-      return ResponseController(res, httpStatus.OK, T_PT.autorizado, user);
+        entidade_nome: dadosUsuario[0].entidade,
+        entidade_id: dadosUsuario[0].id_orgao,
+        unidade_id: dadosUsuario[0].id_unidade,
+        unidade_nome: dadosUsuario[0].unidade,
+        tipo_almoxarife: dadosUsuario[0].tipo_almoxarifado,
+      });
     } catch (error) {
       console.error(error);
       return ResponseController(
         res,
         httpStatus.INTERNAL_SERVER_ERROR,
-        T_PT.no_content,
+        T_PT.server_error,
         null,
       );
     }
   }
 
-  static async listAllUsers(req, res) {
-    const { rows } = await database.query(SQL.todosUsuarios, []);
+  static async getAll(req, res) {
+    const { rows } = await database.query(SQL.getAll, []);
     return ResponseController(res, httpStatus.OK, T_PT.capturados, rows);
   }
 
-  static async deleteUsuario(req, res) {
+  static async softDelete(req, res) {
     const { idUsuario } = req.params;
-    await database.query(SQL.deleteUsuario, [idUsuario]);
+    await database.query(SQL.softDelete, [idUsuario]);
     return ResponseController(res, httpStatus.OK, T_PT.apagado, null);
   }
 
-  static async updatePassword(req, res) {
-    const { user } = req.params;
+  static async updateSenha(req, res) {
+    const { idUsuario } = req.params;
     const data = req.body;
     const hashPassword = await bcrypt.hash(data.SENHA, 14);
-    await database.query(SQL.updatePass, [hashPassword, user]);
+    await database.query(SQL.updateSenha, [hashPassword, idUsuario]);
     return ResponseController(res, httpStatus.OK, T_PT.atualizado, null);
   }
 
-  static async updateBasics(req, res) {
-    const { user } = req.params;
+  static async updateBasicos(req, res) {
+    const { idUsuario } = req.params;
     const data = req.body;
-    await database.query(SQL.updatebasics, [
+    await database.query(SQL.updateBasicos, [
       data.NOME,
       data.DESCRICAO,
       data.NIVEL,
-      user,
+      idUsuario,
     ]);
     return ResponseController(res, httpStatus.OK, T_PT.atualizado, null);
   }
 }
 
-module.exports = UserController;
+module.exports = UsuarioController;

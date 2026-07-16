@@ -34,13 +34,52 @@ class OrgaoController {
     return ResponseController(res, httpStatus.CREATED, T_PT.cadastrado, id);
   }
 
+  static async update(req, res) {
+    const { idOrgao } = req.params;
+    const data = req.body;
+
+    await database.query(SQL.update, [
+      data.NOME,
+      data.ENDERECO,
+      data.BAIRRO,
+      data.CIDADE,
+      data.EMAIL,
+      data.TELEFONE,
+      data.STATUS,
+      idOrgao,
+    ]);
+
+    return ResponseController(res, httpStatus.OK, T_PT.atualizado, idOrgao);
+  }
+
+  static async getAll(req, res) {
+    const { rows } = await database.query(SQL.getAll, []);
+    return ResponseController(res, httpStatus.OK, T_PT.capturados, rows);
+  }
+
+  static async getById(req, res) {
+    const { idOrgao } = req.params;
+    const { rows, rowCount } = await database.query(SQL.getById, [idOrgao]);
+
+    if (rowCount === 0) {
+      return ResponseController(
+        res,
+        httpStatus.NOT_FOUND,
+        T_PT.not_found,
+        null,
+      );
+    }
+
+    return ResponseController(res, httpStatus.OK, T_PT.capturado, rows[0]);
+  }
+
   static async cadastrarModulos(req, res) {
-    const { idEntidade } = req.params;
+    const { idOrgao } = req.params;
     const data = req.body;
     const id = uuid();
 
     const { rowCount, rows } = await database.query(SQL.verifica_modulo, [
-      idEntidade,
+      idOrgao,
     ]);
 
     if (rowCount !== 0) {
@@ -54,7 +93,7 @@ class OrgaoController {
 
     await database.query(SQL.modulos_liberados, [
       id,
-      idEntidade,
+      idOrgao,
       data.ESCOLAR,
       data.SAUDE,
       data.ASSISTENCIA_SOCIAL,
@@ -64,77 +103,24 @@ class OrgaoController {
     return ResponseController(res, httpStatus.CREATED, T_PT.cadastrado, id);
   }
 
-  static async listaEntidades(req, res) {
-    const { rows } = await database.query(SQL.getEntidades, []);
-    return ResponseController(res, httpStatus.OK, T_PT.capturados, rows);
-  }
-
-  static async listaEntidade(req, res) {
-    const { idEntidade } = req.params;
-    const { rows, rowCount } = await database.query(SQL.getEntidade, [
-      idEntidade,
-    ]);
-    if (rowCount === 0) {
-      return ResponseController(
-        res,
-        httpStatus.NOT_FOUND,
-        T_PT.not_found,
-        null,
-      );
-    }
-    return ResponseController(res, httpStatus.OK, T_PT.capturado, rows[0]);
-  }
-
-  static async updateEntidade(req, res) {
-    const { idEntidade } = req.params;
-    const data = req.body;
-
-    await database.query(SQL.update, [
-      data.NOME,
-      data.ENDERECO,
-      data.BAIRRO,
-      data.CIDADE,
-      data.EMAIL,
-      data.TELEFONE,
-      data.STATUS,
-      idEntidade,
-    ]);
-
-    return ResponseController(res, httpStatus.OK, T_PT.atualizado, idEntidade);
-  }
-
   static async updateModulos(req, res) {
-    const { idEntidade } = req.params;
+    const { idOrgao } = req.params;
     const data = req.body;
 
-    await database.query(SQL.update_modulos_liberados, [
+    await database.query(SQL.update_modulos, [
       data.ESCOLAR,
       data.SAUDE,
       data.ASSISTENCIA_SOCIAL,
       data.COMBUSTIVEL,
-      idEntidade,
+      idOrgao,
     ]);
 
-    return ResponseController(res, httpStatus.OK, T_PT.atualizado, idEntidade);
-  }
-
-  static async getEstoqueEntidade(req, res) {
-    const { idEntidade } = req.params;
-    const { rows } = await database.query(SQL.getEstoque, [idEntidade]);
-    return ResponseController(res, httpStatus.OK, T_PT.capturado, rows);
-  }
-
-  static async getEstoqueUnidade(req, res) {
-    const { idUnidade } = req.params;
-    const { rows } = await database.query(SQL.getEstoqueUnidade, [idUnidade]);
-    return ResponseController(res, httpStatus.OK, T_PT.capturado, rows);
+    return ResponseController(res, httpStatus.OK, T_PT.atualizado, idOrgao);
   }
 
   static async getModulos(req, res) {
-    const { idEntidade } = req.params;
-    const { rows } = await database.query(SQL.getModulosLiberados, [
-      idEntidade,
-    ]);
+    const { idOrgao } = req.params;
+    const { rows } = await database.query(SQL.getModulos, [idOrgao]);
     return ResponseController(res, httpStatus.OK, T_PT.capturado, rows[0]);
   }
 }

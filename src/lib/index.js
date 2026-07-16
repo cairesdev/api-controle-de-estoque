@@ -1,7 +1,7 @@
 const { PG_DEFAULT_POOL, T_PT } = require("./constants");
 const httpStatus = require("./http-status");
 const { ResponseController } = require("./returns");
-const { randomizeNumber } = require("./utils");
+const { randomizeNumber, dateISO } = require("./utils");
 
 module.exports = {
   PG_DEFAULT_POOL,
@@ -9,4 +9,5 @@ module.exports = {
   T_PT,
   httpStatus,
   randomizeNumber,
+  dateISO,
 };

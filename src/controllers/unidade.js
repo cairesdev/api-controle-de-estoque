@@ -5,12 +5,12 @@ const { v4: uuid } = require("uuid");
 
 class UnidadeController {
   static async create(req, res) {
-    const { idEntidade } = req.params;
+    const { idOrgao } = req.params;
     const data = req.body;
     const id = uuid();
 
-    const { rowCount, rows } = await database.query(SQL.verifica_unidade, [
-      idEntidade,
+    const { rowCount, rows } = await database.query(SQL.verifica_nome, [
+      idOrgao,
       data.NOME,
     ]);
 
@@ -19,7 +19,7 @@ class UnidadeController {
         res,
         httpStatus.CONFLICT,
         T_PT.cft_nome,
-        rows[0].id
+        rows[0].id,
       );
     }
 
@@ -28,7 +28,7 @@ class UnidadeController {
       data.NOME,
       data.ENDERECO,
       data.BAIRRO,
-      idEntidade,
+      idOrgao,
       data.EMAIL,
       data.TELEFONE,
       data.TIPO_UNIDADE,
@@ -41,7 +41,7 @@ class UnidadeController {
     const { idUnidade } = req.params;
     const data = req.body;
 
-    await database.query(SQL.updade, [
+    await database.query(SQL.update, [
       data.NOME,
       data.ENDERECO,
       data.BAIRRO,
@@ -56,23 +56,31 @@ class UnidadeController {
   }
 
   static async getAll(req, res) {
-    const { idEntidade } = req.params;
-    const { rows } = await database.query(SQL.getAll, [idEntidade]);
+    const { idOrgao } = req.params;
+    const { rows } = await database.query(SQL.getAll, [idOrgao]);
     return ResponseController(res, httpStatus.OK, T_PT.capturados, rows);
   }
 
-  static async getUnique(req, res) {
+  static async getById(req, res) {
     const { idUnidade } = req.params;
-    const { rows, rowCount } = await database.query(SQL.getUnique, [idUnidade]);
+    const { rows, rowCount } = await database.query(SQL.getById, [idUnidade]);
+
     if (rowCount === 0) {
       return ResponseController(
         res,
         httpStatus.NOT_FOUND,
         T_PT.not_found,
-        null
+        null,
       );
     }
+
     return ResponseController(res, httpStatus.OK, T_PT.capturado, rows[0]);
+  }
+
+  static async getEstoque(req, res) {
+    const { idUnidade } = req.params;
+    const { rows } = await database.query(SQL.getEstoque, [idUnidade]);
+    return ResponseController(res, httpStatus.OK, T_PT.capturado, rows);
   }
 }
 
