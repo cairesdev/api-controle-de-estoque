@@ -288,14 +288,14 @@ class EstoqueController {
 
     for (const item of itens) {
       await database.query(SQLEstoque.softDeleteItem, [item.id]);
-      await database.query(SQLEstoque.criarMovimentoDelecao, [
-        uuid(),
-        item.id,
-        now,
-        item.id,
-        UUID_DELECAO_ESTOQUE,
-        req.user.id,
-      ]);
+      // await database.query(SQLEstoque.criarMovimentoDelecao, [
+      //   uuid(),
+      //   item.id,
+      //   now,
+      //   item.id,
+      //   UUID_DELECAO_ESTOQUE,
+      //   req.user.id,
+      // ]);
     }
 
     await database.query(SQLEstoque.softDeleteRemessa, [idRemessa]);

@@ -26,4 +26,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: workcenterma/cloud-v2-api:bruno-v2.0
+          tags: workcenterma/cloud-v2-api:bruno-v2.1
